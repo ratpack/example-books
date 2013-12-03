@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>${model.title}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/bootstrap-theme.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding: 4em;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <% if (model.msg) { %>
+    <div class="alert alert-info">$model.msg</div>
+    <% } %>
