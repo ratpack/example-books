@@ -20,4 +20,5 @@ repositories {
 
 dependencies {
   springloaded "org.springsource.springloaded:springloaded-core:1.1.4"
+  compile "io.ratpack:ratpack-h2:0.9.0-SNAPSHOT"
 }
