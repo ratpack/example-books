@@ -1,6 +1,4 @@
-import groovy.sql.GroovyRowResult
-import groovy.sql.Sql
-import ratpack.example.books.Book
+import ratpack.example.books.BookService
 import ratpack.groovy.sql.SqlModule
 import ratpack.h2.H2Module
 
@@ -14,15 +12,12 @@ ratpack {
         register new SqlModule()
     }
 
-    handlers { Sql sql ->
+    handlers { BookService bookService ->
 
-        sql.executeInsert("create table if not exists books (id int primary key auto_increment, title varchar(255), content varchar(255))")
+        bookService.createTable()
 
         get {
-            def books = sql.rows("select id, title, content from books order by id").collect { GroovyRowResult result ->
-                new Book(result.id, result.title, result.content)
-            }
-            render groovyTemplate("listing.html", title: "Books", books: books, msg: request.queryParams.msg ?: "")
+            render groovyTemplate("listing.html", title: "Books", books: bookService.list(), msg: request.queryParams.msg ?: "")
         }
 
         handler("create") {
@@ -32,8 +27,7 @@ ratpack {
                 }
                 post {
                     def form = parse form()
-                    def ids = sql.executeInsert("insert into books (title, content) values ($form.title, $form.content)")
-                    def id = ids[0][0]
+                    def id = bookService.insert(form.title, form.content)
                     redirect "/?msg=Book+$id+created"
                 }
             }
@@ -41,9 +35,8 @@ ratpack {
 
         handler("update/:id") {
             def id = pathTokens.asLong("id")
-            def row = sql.firstRow("select title, content from books where id = $id order by id")
-            def book = new Book(id, row.title, row.content)
-            if (row == null) {
+            def book = bookService.find(id)
+            if (book == null) {
                 clientError(404)
             } else {
                 byMethod {
@@ -52,7 +45,7 @@ ratpack {
                     }
                     post {
                         def form = parse form()
-                        sql.executeUpdate("update books set title = $form.title, content = $form.content where id = $id")
+                        bookService.update(id, form.title, form.content)
                         redirect "/?msg=Book+$id+updated"
                     }
                 }
@@ -60,12 +53,12 @@ ratpack {
         }
 
         post("delete/:id") {
-            def id = pathTokens.id
-            def row = sql.firstRow("select title, content from books where id = $id order by id")
-            if (row == null) {
+            def id = pathTokens.asLong("id")
+            def book = bookService.find(id)
+            if (book == null) {
                 clientError(404)
             } else {
-                sql.executeUpdate("delete from books where id = $id")
+                bookService.delete(id)
                 redirect "/?msg=Book+$id+deleted"
             }
         }
