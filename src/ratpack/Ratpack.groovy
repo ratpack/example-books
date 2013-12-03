@@ -1,9 +1,11 @@
 import static ratpack.groovy.Groovy.*
 
 ratpack {
-  handlers {
-    get {
-      render "Hello World!"
+    handlers {
+        get {
+            render groovyTemplate("message.html", title: "Hello World!", message: "Welcome to Ratpack!")
+        }
+
+        assets "public"
     }
-  }
 }
