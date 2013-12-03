@@ -22,4 +22,7 @@ dependencies {
   springloaded "org.springsource.springloaded:springloaded-core:1.1.4"
   compile "io.ratpack:ratpack-h2:0.9.0-SNAPSHOT"
   compile "io.ratpack:ratpack-jackson:0.9.0-SNAPSHOT"
+  testCompile "org.spockframework:spock-core:0.7-groovy-2.0", {
+      exclude module: "groovy-all"
+  }
 }
