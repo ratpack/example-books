@@ -39,6 +39,37 @@ ratpack {
             }
         }
 
+        handler("update/:id") {
+            def id = pathTokens.asLong("id")
+            def row = sql.firstRow("select title, content from books where id = $id order by id")
+            def book = new Book(id, row.title, row.content)
+            if (row == null) {
+                clientError(404)
+            } else {
+                byMethod {
+                    get {
+                        render groovyTemplate("update.html", title: "Update Book", book: book)
+                    }
+                    post {
+                        def form = parse form()
+                        sql.executeUpdate("update books set title = $form.title, content = $form.content where id = $id")
+                        redirect "/?msg=Book+$id+updated"
+                    }
+                }
+            }
+        }
+
+        post("delete/:id") {
+            def id = pathTokens.id
+            def row = sql.firstRow("select title, content from books where id = $id order by id")
+            if (row == null) {
+                clientError(404)
+            } else {
+                sql.executeUpdate("delete from books where id = $id")
+                redirect "/?msg=Book+$id+deleted"
+            }
+        }
+
         assets "public"
     }
 

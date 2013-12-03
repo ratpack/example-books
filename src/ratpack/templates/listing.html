@@ -19,6 +19,10 @@
         <td>$book.id</td>
         <td>$book.title</td>
         <td>
+            <form action="/delete/$book.id" method="post" style="display: inline">
+                <input type="submit" name="delete" value="Delete" class="btn btn-danger "/>
+            </form>
+            <a href="/update/$book.id" class="btn btn-default">Update</a>
         </td>
     </tr>
     <% } %>
