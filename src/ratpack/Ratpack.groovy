@@ -1,6 +1,7 @@
 import com.google.inject.Module
 import ratpack.example.books.Book
 import ratpack.example.books.BookModule
+import ratpack.example.books.BookRestEndpoint
 import ratpack.example.books.BookService
 import ratpack.groovy.sql.SqlModule
 import ratpack.h2.H2Module
@@ -101,52 +102,7 @@ ratpack {
                     render json(books)
                 }
             }
-            handler("book/:id?") {
-                def id = pathTokens.asLong("id")
-                background {
-                    id ? bookService.find(id) : null
-
-
-                } then { Book book ->
-                    if (!request.method.post && (id == null || book == null)) {
-                        return clientError(404)
-                    }
-
-                    byMethod {
-                        post {
-                            if (id != null) {
-                                clientError 404
-                            } else {
-                                def input = parse jsonNode()
-                                background {
-                                    def newId = bookService.insert(input.get("title").asText(), input.get("content").asText())
-                                    bookService.find(newId)
-                                } then { Book createdBook ->
-                                    render json(createdBook)
-                                }
-                            }
-                        }
-                        get {
-                            render book
-                        }
-                        put {
-                            def input = parse jsonNode()
-                            background {
-                                bookService.update(id, input.get("title").asText(), input.get("content").asText())
-                            } then {
-                                render json(bookService.find(it))
-                            }
-                        }
-                        delete {
-                            background {
-                                bookService.delete(id)
-                            } then {
-                                response.send()
-                            }
-                        }
-                    }
-                }
-            }
+            handler("book/:id?", registry.get(BookRestEndpoint))
         }
 
         assets "public"
