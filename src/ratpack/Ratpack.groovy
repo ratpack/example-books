@@ -1,5 +1,5 @@
 import com.google.inject.Module
-import ratpack.example.books.BookRenderer
+import ratpack.example.books.BookModule
 import ratpack.example.books.BookService
 import ratpack.groovy.sql.SqlModule
 import ratpack.h2.H2Module
@@ -16,6 +16,7 @@ ratpack {
         register new H2Module()
         register new SqlModule()
         register new JacksonModule()
+        register new BookModule()
 
         try {
             Module remoteControlModule = getClass().classLoader.loadClass("ratpack.remote.RemoteControlModule").newInstance()
@@ -23,7 +24,6 @@ ratpack {
         } catch (ignore) {
         }
 
-        bind BookRenderer
     }
 
     handlers { BookService bookService ->
