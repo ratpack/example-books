@@ -1,4 +1,5 @@
 import com.google.inject.Module
+import ratpack.example.books.BookRenderer
 import ratpack.example.books.BookService
 import ratpack.groovy.sql.SqlModule
 import ratpack.h2.H2Module
@@ -21,6 +22,8 @@ ratpack {
             register remoteControlModule
         } catch (ignore) {
         }
+
+        bind BookRenderer
     }
 
     handlers { BookService bookService ->
@@ -97,7 +100,7 @@ ratpack {
                         }
                     }
                     get {
-                        render json(book)
+                        render book
                     }
                     put {
                         def input = parse jsonNode()
