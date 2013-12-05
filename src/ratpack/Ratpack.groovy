@@ -1,4 +1,5 @@
 import com.google.inject.Module
+import ratpack.example.books.Book
 import ratpack.example.books.BookModule
 import ratpack.example.books.BookService
 import ratpack.groovy.sql.SqlModule
@@ -41,26 +42,35 @@ ratpack {
                 }
                 post {
                     def form = parse form()
-                    def id = bookService.insert(form.title, form.content)
-                    redirect "/?msg=Book+$id+created"
+                    background {
+                        bookService.insert(form.title, form.content)
+                    } then {
+                        redirect "/?msg=Book+$it+created"
+                    }
                 }
             }
         }
 
         handler("update/:id") {
             def id = pathTokens.asLong("id")
-            def book = bookService.find(id)
-            if (book == null) {
-                clientError(404)
-            } else {
-                byMethod {
-                    get {
-                        render groovyTemplate("update.html", title: "Update Book", book: book)
-                    }
-                    post {
-                        def form = parse form()
-                        bookService.update(id, form.title, form.content)
-                        redirect "/?msg=Book+$id+updated"
+            background {
+                bookService.find(id)
+            } then { Book book ->
+                if (book == null) {
+                    clientError(404)
+                } else {
+                    byMethod {
+                        get {
+                            render groovyTemplate("update.html", title: "Update Book", book: book)
+                        }
+                        post {
+                            def form = parse form()
+                            background {
+                                bookService.update(id, form.title, form.content)
+                            } then {
+                                redirect "/?msg=Book+$id+updated"
+                            }
+                        }
                     }
                 }
             }
@@ -68,48 +78,72 @@ ratpack {
 
         post("delete/:id") {
             def id = pathTokens.asLong("id")
-            def book = bookService.find(id)
-            if (book == null) {
-                clientError(404)
-            } else {
-                bookService.delete(id)
-                redirect "/?msg=Book+$id+deleted"
+            background {
+                bookService.find(id)
+            } then { Book book ->
+                if (book == null) {
+                    clientError(404)
+                } else {
+                    background {
+                        bookService.delete(id)
+                    } then {
+                        redirect "/?msg=Book+$id+deleted"
+                    }
+                }
             }
         }
 
         prefix("api") {
             get("books") {
-                render json(bookService.list())
+                background {
+                    bookService.list()
+                } then { List<Book> books ->
+                    render json(books)
+                }
             }
             handler("book/:id?") {
                 def id = pathTokens.asLong("id")
-                def book = id ? bookService.find(id) : null
+                background {
+                    id ? bookService.find(id) : null
 
-                if (!request.method.post && (id == null || book == null)) {
-                    return clientError(404)
-                }
 
-                byMethod {
-                    post {
-                        if (id != null) {
-                            clientError 404
-                        } else {
-                            def input = parse jsonNode()
-                            def newId = bookService.insert(input.get("title").asText(), input.get("content").asText())
-                            render json(bookService.find(newId))
+                } then { Book book ->
+                    if (!request.method.post && (id == null || book == null)) {
+                        return clientError(404)
+                    }
+
+                    byMethod {
+                        post {
+                            if (id != null) {
+                                clientError 404
+                            } else {
+                                def input = parse jsonNode()
+                                background {
+                                    def newId = bookService.insert(input.get("title").asText(), input.get("content").asText())
+                                    bookService.find(newId)
+                                } then { Book createdBook ->
+                                    render json(createdBook)
+                                }
+                            }
                         }
-                    }
-                    get {
-                        render book
-                    }
-                    put {
-                        def input = parse jsonNode()
-                        bookService.update(id, input.get("title").asText(), input.get("content").asText())
-                        render json(bookService.find(id))
-                    }
-                    delete {
-                        bookService.delete(id)
-                        response.send()
+                        get {
+                            render book
+                        }
+                        put {
+                            def input = parse jsonNode()
+                            background {
+                                bookService.update(id, input.get("title").asText(), input.get("content").asText())
+                            } then {
+                                render json(bookService.find(it))
+                            }
+                        }
+                        delete {
+                            background {
+                                bookService.delete(id)
+                            } then {
+                                response.send()
+                            }
+                        }
                     }
                 }
             }
