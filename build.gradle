@@ -25,4 +25,6 @@ dependencies {
   testCompile "org.spockframework:spock-core:0.7-groovy-2.0", {
       exclude module: "groovy-all"
   }
+  testCompile "org.gebish:geb-spock:0.9.2"
+  testCompile "org.seleniumhq.selenium:selenium-firefox-driver:2.37.1"
 }
