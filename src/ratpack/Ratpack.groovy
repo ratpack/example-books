@@ -32,8 +32,12 @@ ratpack {
 
         bookService.createTable()
 
-        get {
-            render groovyTemplate("listing.html", title: "Books", books: bookService.list(), msg: request.queryParams.msg ?: "")
+        get { BookService b ->
+          background {
+            b.list()
+          } then {
+            render groovyTemplate("listing.html", title: "Books", books: it, msg: request.queryParams.msg ?: "")
+          }
         }
 
         handler("create") {
