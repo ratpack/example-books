@@ -1,4 +1,3 @@
-import com.google.inject.Module
 import ratpack.example.books.Book
 import ratpack.example.books.BookModule
 import ratpack.example.books.BookRestEndpoint
@@ -6,12 +5,12 @@ import ratpack.example.books.BookService
 import ratpack.groovy.sql.SqlModule
 import ratpack.h2.H2Module
 import ratpack.jackson.JacksonModule
+import ratpack.remote.RemoteControlModule
 
 import static ratpack.form.Forms.form
 import static ratpack.groovy.Groovy.groovyTemplate
 import static ratpack.groovy.Groovy.ratpack
 import static ratpack.jackson.Jackson.json
-import static ratpack.jackson.Jackson.jsonNode
 
 ratpack {
     modules {
@@ -19,13 +18,7 @@ ratpack {
         register new SqlModule()
         register new JacksonModule()
         register new BookModule()
-
-        try {
-            Module remoteControlModule = getClass().classLoader.loadClass("ratpack.remote.RemoteControlModule").newInstance()
-            register remoteControlModule
-        } catch (ignore) {
-        }
-
+        register new RemoteControlModule()
     }
 
     handlers { BookService bookService ->
