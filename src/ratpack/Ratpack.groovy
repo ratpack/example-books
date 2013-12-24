@@ -28,11 +28,11 @@ ratpack {
     handlers { BookService bookService ->
 
         get {
-          background {
-            b.list()
-          } then {
-            render groovyTemplate("listing.html", title: "Books", books: it, msg: request.queryParams.msg ?: "")
-          }
+            background {
+                bookService.list()
+            } then {
+                render groovyTemplate("listing.html", title: "Books", books: it, msg: request.queryParams.msg ?: "")
+            }
         }
 
         handler("create") {
