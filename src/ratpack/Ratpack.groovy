@@ -19,13 +19,15 @@ ratpack {
         register new JacksonModule()
         register new BookModule()
         register new RemoteControlModule()
+
+        init { BookService bookService ->
+            bookService.createTable()
+        }
     }
 
     handlers { BookService bookService ->
 
-        bookService.createTable()
-
-        get { BookService b ->
+        get {
           background {
             b.list()
           } then {
