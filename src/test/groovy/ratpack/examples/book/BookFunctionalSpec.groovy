@@ -1,20 +1,33 @@
 package ratpack.examples.book
 
 import geb.spock.GebReportingSpec
+import groovy.sql.Sql
 import ratpack.examples.book.pages.BooksPage
 import ratpack.examples.book.pages.CreateBookPage
 import ratpack.examples.book.pages.UpdateBookPage
 import ratpack.groovy.test.LocalScriptApplicationUnderTest
+import ratpack.registry.Registry
 import ratpack.test.ApplicationUnderTest
+import ratpack.test.remote.RemoteControl
+import spock.lang.Shared
 import spock.lang.Stepwise
 
 @Stepwise
 class BookFunctionalSpec extends GebReportingSpec {
 
-    ApplicationUnderTest aut = new LocalScriptApplicationUnderTest()
+    @Shared
+    ApplicationUnderTest aut = new LocalScriptApplicationUnderTest('other.remoteControl.enabled': 'true')
 
     def setup() {
         browser.baseUrl = aut.address.toString()
+    }
+
+    def cleanupSpec() {
+        RemoteControl remote = new RemoteControl(aut)
+        remote.exec {
+            Registry registry = delegate.registry
+            registry.get(Sql).execute("delete from books")
+        }
     }
 
     def "no books are listed"() {

@@ -11,11 +11,11 @@ import spock.lang.Specification
 
 class BookApiSpec extends Specification {
 
-    ApplicationUnderTest aut = new LocalScriptApplicationUnderTest()
+    ApplicationUnderTest aut = new LocalScriptApplicationUnderTest('other.remoteControl.enabled': 'true')
     @Delegate TestHttpClient client = TestHttpClients.testHttpClient(aut)
     RemoteControl remote = new RemoteControl(aut)
 
-    def setup() {
+    def cleanup() {
         remote.exec {
             Registry registry = delegate.registry
             registry.get(Sql).execute("delete from books")
