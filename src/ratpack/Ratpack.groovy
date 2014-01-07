@@ -1,7 +1,10 @@
+import com.codahale.metrics.health.HealthCheckRegistry
+import ratpack.codahale.metrics.CodaHaleMetricsModule
 import ratpack.example.books.Book
 import ratpack.example.books.BookModule
 import ratpack.example.books.BookRestEndpoint
 import ratpack.example.books.BookService
+import ratpack.example.books.DatabaseHealthCheck
 import ratpack.groovy.sql.SqlModule
 import ratpack.h2.H2Module
 import ratpack.jackson.JacksonModule
@@ -14,11 +17,14 @@ import static ratpack.jackson.Jackson.json
 
 ratpack {
     modules {
+        register new CodaHaleMetricsModule().jmx()
         register new H2Module()
         register new SqlModule()
         register new JacksonModule()
         register new BookModule()
         register new RemoteControlModule()
+        // TODO uncomment this after 0.9.1 release
+        //bind DatabaseHealthCheck
 
         init { BookService bookService ->
             bookService.createTable()
@@ -102,6 +108,10 @@ ratpack {
                 }
             }
             handler("book/:id?", registry.get(BookRestEndpoint))
+        }
+
+        get("healthCheck") { HealthCheckRegistry healthChecks ->
+            render healthChecks.runHealthChecks().toString()
         }
 
         assets "public"
