@@ -17,8 +17,7 @@ class BookApiSpec extends Specification {
 
     def cleanup() {
         remote.exec {
-            Registry registry = delegate.registry
-            registry.get(Sql).execute("delete from books")
+            get(Sql).execute("delete from books")
         }
     }
 

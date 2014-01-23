@@ -25,8 +25,7 @@ class BookFunctionalSpec extends GebReportingSpec {
     def cleanupSpec() {
         RemoteControl remote = new RemoteControl(aut)
         remote.exec {
-            Registry registry = delegate.registry
-            registry.get(Sql).execute("delete from books")
+            get(Sql).execute("delete from books")
         }
     }
 

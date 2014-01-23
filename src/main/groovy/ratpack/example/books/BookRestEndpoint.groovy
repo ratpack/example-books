@@ -21,49 +21,52 @@ class BookRestEndpoint extends GroovyHandler {
     protected void handle(GroovyContext context) {
         context.with {
             def id = pathTokens.asLong("id")
-            background {
-                id != null ? bookService.find(id) : null
-            } then { Book book ->
-                if (!request.method.post && (id == null || book == null)) {
-                    clientError(404)
-                    return null
-                }
 
-                byMethod {
-                    post {
-                        if (id != null) {
-                            clientError 404
-                        } else {
-                            def input = parse jsonNode()
-                            background {
-                                def newId = bookService.insert(input.get("title").asText(), input.get("content").asText())
-                                bookService.find(newId)
-                            } then { Book createdBook ->
+            byMethod {
+                post {
+                    if (id != null) {
+                        clientError 404
+                    } else {
+                        def input = parse jsonNode()
+                        bookService.insert(input.get("title").asText(), input.get("content").asText())
+                        .subscribe { Long newId ->
+                            bookService.find(newId)
+                            .single()
+                            .subscribe { Book createdBook ->
                                 render json(createdBook)
                             }
                         }
                     }
-                    get {
-                        render book
-                    }
-                    put {
-                        def input = parse jsonNode()
-                        background {
-                            bookService.update(id, input.get("title").asText(), input.get("content").asText())
-                        } then {
-                            render json(bookService.find(it))
+                }
+                get {
+                    bookService.find(id)
+                    .single()
+                    .subscribe { Book book ->
+                        if (book == null) {
+                            clientError 404
+                        } else {
+                            render book
                         }
                     }
-                    delete {
-                        background {
-                            bookService.delete(id)
-                        } then {
-                            response.send()
+                }
+                put {
+                    def input = parse jsonNode()
+                    bookService.update(id, input.get("title").asText(), input.get("content").asText())
+                    .subscribe {
+                        bookService.find(id)
+                        .single()
+                        .subscribe { Book book ->
+                            render json(book)
                         }
+                    }
+                }
+                delete {
+                    bookService.delete(id)
+                    .subscribe {
+                        response.send()
                     }
                 }
             }
         }
-
     }
 }

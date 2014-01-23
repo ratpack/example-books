@@ -10,7 +10,9 @@ import ratpack.h2.H2Module
 import ratpack.jackson.JacksonModule
 import ratpack.remote.RemoteControlModule
 
-import static ratpack.form.Forms.form
+import ratpack.form.Form
+import ratpack.rx.RxModule
+
 import static ratpack.groovy.Groovy.groovyTemplate
 import static ratpack.groovy.Groovy.ratpack
 import static ratpack.jackson.Jackson.json
@@ -23,8 +25,8 @@ ratpack {
         register new JacksonModule()
         register new BookModule()
         register new RemoteControlModule()
-        // TODO uncomment this after 0.9.1 release
-        //bind DatabaseHealthCheck
+        register new RxModule()
+        bind DatabaseHealthCheck
 
         init { BookService bookService ->
             bookService.createTable()
@@ -34,11 +36,11 @@ ratpack {
     handlers { BookService bookService ->
 
         get {
-            background {
-                bookService.list()
-            } then {
-                render groovyTemplate("listing.html", title: "Books", books: it, msg: request.queryParams.msg ?: "")
-            }
+           bookService.all()
+           .toList()
+           .subscribe { List<Book> books ->
+                render groovyTemplate("listing.html", title: "Books", books: books, msg: request.queryParams.msg ?: "")
+           }
         }
 
         handler("create") {
@@ -47,11 +49,11 @@ ratpack {
                     render groovyTemplate("create.html", title: "Create Book")
                 }
                 post {
-                    def form = parse form()
-                    background {
-                        bookService.insert(form.title, form.content)
-                    } then {
-                        redirect "/?msg=Book+$it+created"
+                    def form = parse(Form.class)
+                    bookService.insert(form.title, form.content)
+                    .single()
+                    .subscribe { Long id ->
+                        redirect "/?msg=Book+$id+created"
                     }
                 }
             }
@@ -59,9 +61,10 @@ ratpack {
 
         handler("update/:id") {
             def id = pathTokens.asLong("id")
-            background {
-                bookService.find(id)
-            } then { Book book ->
+
+            bookService.find(id)
+            .single()
+            .subscribe { Book book ->
                 if (book == null) {
                     clientError(404)
                 } else {
@@ -70,10 +73,9 @@ ratpack {
                             render groovyTemplate("update.html", title: "Update Book", book: book)
                         }
                         post {
-                            def form = parse form()
-                            background {
-                                bookService.update(id, form.title, form.content)
-                            } then {
+                            def form = parse(Form.class)
+                            bookService.update(id, form.title, form.content)
+                            .subscribe {
                                 redirect "/?msg=Book+$id+updated"
                             }
                         }
@@ -84,26 +86,17 @@ ratpack {
 
         post("delete/:id") {
             def id = pathTokens.asLong("id")
-            background {
-                bookService.find(id)
-            } then { Book book ->
-                if (book == null) {
-                    clientError(404)
-                } else {
-                    background {
-                        bookService.delete(id)
-                    } then {
-                        redirect "/?msg=Book+$id+deleted"
-                    }
-                }
+            bookService.delete(id)
+            .subscribe {
+                redirect "/?msg=Book+$id+deleted"
             }
         }
 
         prefix("api") {
             get("books") {
-                background {
-                    bookService.list()
-                } then { List<Book> books ->
+                bookService.all()
+                .toList()
+                .subscribe { List<Book> books ->
                     render json(books)
                 }
             }

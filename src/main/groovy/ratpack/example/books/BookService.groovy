@@ -1,58 +1,61 @@
 package ratpack.example.books
 
-import com.codahale.metrics.MetricRegistry
-import com.codahale.metrics.annotation.Timed
-import groovy.sql.GroovyRowResult
 import groovy.sql.Sql
+import ratpack.rx.RxBackground
 
 import javax.inject.Inject
 
 class BookService {
 
     private final Sql sql
-    private final MetricRegistry metricRegistry
+    private final RxBackground rxBackground
 
     @Inject
-    BookService(Sql sql, MetricRegistry metricRegistry) {
+    BookService(Sql sql, RxBackground rxBackground) {
         this.sql = sql
-        this.metricRegistry = metricRegistry
+        this.rxBackground = rxBackground
     }
 
-    @Timed
     void createTable() {
         sql.executeInsert("create table if not exists books (id int primary key auto_increment, title varchar(255), content varchar(255))")
     }
 
-    @Timed
-    List<Book> list() {
-        sql.rows("select id, title, content from books order by id").collect { GroovyRowResult result ->
-            new Book(result.id, result.title, result.content)
+    rx.Observable<Book> all() {
+        rxBackground.observeEach() {
+            sql.rows("select id, title, content from books order by id")
+        } map{
+            new Book(it.id, it.title, it.content)
         }
     }
 
-    @Timed
-    long insert(String title, String content) {
-        if (title.toLowerCase().contains('foo')) {
-            metricRegistry.meter("Foo Book Created").mark()
+    rx.Observable<Long> insert(String title, String content) {
+        rxBackground.observeEach() {
+            sql.executeInsert("insert into books (title, content) values ($title, $content)")
         }
-
-        sql.executeInsert("insert into books (title, content) values ($title, $content)")[0][0] as long
+        .first()
+        .map {
+            it[0] as long
+        }
     }
 
-    @Timed
-    Book find(long id) {
-        def row = sql.firstRow("select title, content from books where id = $id order by id")
-        row ? new Book(id, row.title, row.content) : null
+    rx.Observable<Book> find(long id) {
+        rxBackground.observe {
+            sql.firstRow("select title, content from books where id = $id order by id")
+        } map{
+            it == null ? null : new Book(id, it.title, it.content)
+        }
     }
 
-    @Timed
-    void update(long id, String title, String content) {
-        sql.executeUpdate("update books set title = $title, content = $content where id = $id")
+    rx.Observable<Void> update(long id, String title, String content) {
+        rxBackground.observe {
+            sql.executeUpdate("update books set title = $title, content = $content where id = $id")
+        }
     }
 
-    @Timed
-    void delete(long id) {
-        sql.executeUpdate("delete from books where id = $id")
+    rx.Observable<Void> delete(long id) {
+        rxBackground.observe {
+            sql.executeUpdate("delete from books where id = $id")
+        }
     }
 
 }
