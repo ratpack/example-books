@@ -29,12 +29,12 @@ class BookRestEndpoint extends GroovyHandler {
                     } else {
                         def input = parse jsonNode()
                         bookService.insert(input.get("title").asText(), input.get("content").asText())
-                        .subscribe { Long newId ->
+                        .flatMap { Long newId ->
                             bookService.find(newId)
                             .single()
-                            .subscribe { Book createdBook ->
-                                render json(createdBook)
-                            }
+                        }
+                        .subscribe { Book createdBook ->
+                            render json(createdBook)
                         }
                     }
                 }
@@ -52,12 +52,12 @@ class BookRestEndpoint extends GroovyHandler {
                 put {
                     def input = parse jsonNode()
                     bookService.update(id, input.get("title").asText(), input.get("content").asText())
-                    .subscribe {
+                    .flatMap {
                         bookService.find(id)
                         .single()
-                        .subscribe { Book book ->
-                            render json(book)
-                        }
+                    }
+                    .subscribe { Book book ->
+                        render json(book)
                     }
                 }
                 delete {
