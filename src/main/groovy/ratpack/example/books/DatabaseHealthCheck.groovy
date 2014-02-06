@@ -11,13 +11,16 @@ class DatabaseHealthCheck extends NamedHealthCheck {
     BookService bookService
 
     public String getName() {
-        return "Database Health Check"
+        return "Database-Health-Check"
     }
 
     @Override
     @Timed
     protected HealthCheck.Result check() throws Exception {
-        bookService.list()
+        bookService.all()
+        .toBlockingObservable()
+        .first()
+
         HealthCheck.Result.healthy()
     }
 }

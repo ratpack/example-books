@@ -1,5 +1,5 @@
-import com.codahale.metrics.health.HealthCheckRegistry
 import ratpack.codahale.metrics.CodaHaleMetricsModule
+import ratpack.codahale.metrics.HealthCheckEndpoint
 import ratpack.example.books.Book
 import ratpack.example.books.BookModule
 import ratpack.example.books.BookRestEndpoint
@@ -103,8 +103,8 @@ ratpack {
             handler("book/:id?", registry.get(BookRestEndpoint))
         }
 
-        get("healthCheck") { HealthCheckRegistry healthChecks ->
-            render healthChecks.runHealthChecks().toString()
+        prefix("admin") {
+            handler(registry.get(HealthCheckEndpoint))
         }
 
         assets "public"
