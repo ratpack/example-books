@@ -6,7 +6,7 @@ import ratpack.example.books.BookRestEndpoint
 import ratpack.example.books.BookService
 import ratpack.example.books.DatabaseHealthCheck
 import ratpack.groovy.sql.SqlModule
-import ratpack.h2.H2Module
+import ratpack.hikari.HikariModule
 import ratpack.jackson.JacksonModule
 import ratpack.remote.RemoteControlModule
 
@@ -20,7 +20,7 @@ import static ratpack.jackson.Jackson.json
 ratpack {
     modules {
         register new CodaHaleMetricsModule().jmx()
-        register new H2Module()
+        register new HikariModule([URL: "jdbc:h2:mem:dev;INIT=CREATE SCHEMA IF NOT EXISTS DEV"], "org.h2.jdbcx.JdbcDataSource")
         register new SqlModule()
         register new JacksonModule()
         register new BookModule()

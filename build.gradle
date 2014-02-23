@@ -22,6 +22,7 @@ repositories {
 dependencies {
   springloaded "org.springsource.springloaded:springloaded-core:1.1.4"
   compile "io.ratpack:ratpack-h2:0.9.2-SNAPSHOT"
+  compile "io.ratpack:ratpack-hikari:0.9.2-SNAPSHOT"
   compile "io.ratpack:ratpack-jackson:0.9.2-SNAPSHOT"
   testCompile "org.spockframework:spock-core:0.7-groovy-2.0", {
       exclude module: "groovy-all"
@@ -39,3 +40,4 @@ dependencies {
 // The Groovy that rest-assured drags in via ratpack-groovy-test is toxic, prevent it from coming in
 // This should be fixed upstream in Ratpack
 configurations.testCompile.dependencies.find { it.name == "ratpack-groovy-test" }.exclude(group: "org.codehaus.groovy")
+
