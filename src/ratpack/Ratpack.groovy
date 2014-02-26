@@ -1,5 +1,6 @@
 import ratpack.codahale.metrics.CodaHaleMetricsModule
 import ratpack.codahale.metrics.HealthCheckEndpoint
+import ratpack.codahale.metrics.MetricsEndpoint
 import ratpack.example.books.Book
 import ratpack.example.books.BookModule
 import ratpack.example.books.BookRestEndpoint
@@ -19,7 +20,7 @@ import static ratpack.jackson.Jackson.json
 
 ratpack {
     modules {
-        register new CodaHaleMetricsModule().jmx()
+        register new CodaHaleMetricsModule().jmx().websocketMetrics()
         register new HikariModule([URL: "jdbc:h2:mem:dev;INIT=CREATE SCHEMA IF NOT EXISTS DEV"], "org.h2.jdbcx.JdbcDataSource")
         register new SqlModule()
         register new JacksonModule()
@@ -105,6 +106,11 @@ ratpack {
 
         prefix("admin") {
             handler(registry.get(HealthCheckEndpoint))
+            handler(registry.get(MetricsEndpoint))
+
+            get("metrics") {
+                render groovyTemplate("metrics.html", title: "Metrics")
+            }
         }
 
         assets "public"
