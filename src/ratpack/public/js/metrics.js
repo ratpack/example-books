@@ -10,9 +10,9 @@ function updateRequestCountChart(data) {
 
     var chartData = google.visualization.arrayToDataTable(requestCount);
     var options = {
-        title: 'Request Count',
         pieHole: 0.4,
-        chartArea: {left:0, width:"100%"}
+        legend: 'none',
+        chartArea: {left:0, width:"100%", height: 250}
     };
     var chart = new google.visualization.PieChart(document.getElementById('requestCountChart'));
     chart.draw(chartData, options);
@@ -103,12 +103,56 @@ function updateTimerCharts(data) {
     });
 }
 
+function findElement(arr, propName, propValue) {
+    for (var i=0; i < arr.length; i++) {
+        if (arr[i][propName] == propValue) {
+            return arr[i];
+        }
+    }
+}
+
+function updateJvmCharts(data) {
+    var heapData = google.visualization.arrayToDataTable([
+        ['Label', 'Value'],
+        ['Heap', Math.round(parseInt(findElement(data.gauges, 'name', 'heap.used').value)/1048576)]
+    ]);
+
+    var heapChartOptions = {
+        width: 400, height: 280,
+        redFrom: 900, redTo: 1024,
+        yellowFrom:770, yellowTo: 900,
+        minorTicks: 5,
+        max: 1024
+    };
+
+    var heapChart = new google.visualization.Gauge(document.getElementById('heapChart'));
+    heapChart.draw(heapData, heapChartOptions);
+
+
+    var threadData = google.visualization.arrayToDataTable([
+        ['Label', 'Value'],
+        ['Threads', findElement(data.gauges, 'name', 'count').value]
+    ]);
+
+    var threadChartOptions = {
+        width: 400, height: 280,
+        redFrom: 90, redTo: 100,
+        yellowFrom:75, yellowTo: 90,
+        minorTicks: 5
+    };
+
+    var threadChart = new google.visualization.Gauge(document.getElementById('threadsChart'));
+    threadChart.draw(threadData, threadChartOptions);
+
+}
+
 function updateCharts(data) {
     $("#noData").hide();
 
     var obj = jQuery.parseJSON(data);
     updateRequestCountChart(obj);
     updateTimerCharts(obj);
+    updateJvmCharts(obj);
 }
 
 function connectWs() {

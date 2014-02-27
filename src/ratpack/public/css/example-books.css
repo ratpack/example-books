@@ -1,0 +1,7 @@
+#heapChart, #threadsChart {
+    margin-top: 72px;
+}
+
+#requestCountChart {
+    height: 400px;
+}

@@ -1,8 +1,24 @@
 <% render "_head.html" %>
 <h1>Metrics Dashboard</h1>
 
-<div  id="noData" class="alert alert-info">Waiting for data.....</div>
-<div id="requestCountChart" style="height: 400px;"></div>
+<div  id="noData" class="alert alert-info" style="margin-top: 50px;">Waiting for data.....</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <h2>Request Count</h2>
+        <div id="requestCountChart"></div>
+    </div>
+    <div class="col-md-4">
+        <h2>Heap Size (mbytes)</h2>
+        <div id="heapChart"></div>
+    </div>
+    <div class="col-md-4">
+        <h2>Thread Count</h2>
+        <div id="threadsChart"></div>
+    </div>
+</div>
+
+<h2>Request Timers</h2>
 <div id="timerCharts"></div>
 
 <script type="text/javascript" src = "http://www.google.com/jsapi" charset="utf-8"></script>
