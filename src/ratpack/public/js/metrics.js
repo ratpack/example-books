@@ -112,17 +112,20 @@ function findElement(arr, propName, propValue) {
 }
 
 function updateJvmCharts(data) {
-    var heapData = google.visualization.arrayToDataTable([
+    var maxHeap = findElement(data.gauges, 'name', 'heap.max').value;
+    var usedHeap = findElement(data.gauges, 'name', 'heap.used').value;
+
+                               var heapData = google.visualization.arrayToDataTable([
         ['Label', 'Value'],
-        ['Heap', Math.round(parseInt(findElement(data.gauges, 'name', 'heap.used').value)/1048576)]
+        ['Heap', Math.round(parseInt(usedHeap)/parseInt(maxHeap)*100)]
     ]);
 
     var heapChartOptions = {
         width: 400, height: 280,
-        redFrom: 900, redTo: 1024,
-        yellowFrom:770, yellowTo: 900,
+        redFrom: 90, redTo: 100,
+        yellowFrom:70, yellowTo: 90,
         minorTicks: 5,
-        max: 1024
+        max: 100
     };
 
     var heapChart = new google.visualization.Gauge(document.getElementById('heapChart'));
