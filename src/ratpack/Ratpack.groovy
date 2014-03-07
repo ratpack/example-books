@@ -1,17 +1,12 @@
 import ratpack.codahale.metrics.CodaHaleMetricsModule
-import ratpack.codahale.metrics.HealthCheckEndpoint
-import ratpack.codahale.metrics.MetricsEndpoint
-import ratpack.example.books.Book
-import ratpack.example.books.BookModule
-import ratpack.example.books.BookRestEndpoint
-import ratpack.example.books.BookService
-import ratpack.example.books.DatabaseHealthCheck
+import ratpack.codahale.metrics.HealthCheckHandler
+import ratpack.codahale.metrics.MetricsHandler
+import ratpack.example.books.*
+import ratpack.form.Form
 import ratpack.groovy.sql.SqlModule
 import ratpack.hikari.HikariModule
 import ratpack.jackson.JacksonModule
 import ratpack.remote.RemoteControlModule
-
-import ratpack.form.Form
 import ratpack.rx.RxModule
 
 import static ratpack.groovy.Groovy.groovyTemplate
@@ -105,8 +100,8 @@ ratpack {
         }
 
         prefix("admin") {
-            handler(registry.get(HealthCheckEndpoint))
-            handler(registry.get(MetricsEndpoint))
+            get("health-check/:name?", new HealthCheckHandler())
+            get("metrics-report", new MetricsHandler())
 
             get("metrics") {
                 render groovyTemplate("metrics.html", title: "Metrics")

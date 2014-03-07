@@ -4,7 +4,7 @@ buildscript {
     jcenter()
   }
   dependencies {
-    classpath 'io.ratpack:ratpack-gradle:0.9.2-SNAPSHOT'
+    classpath 'io.ratpack:ratpack-gradle:0.9.3-SNAPSHOT'
   }
 }
 
@@ -21,9 +21,9 @@ repositories {
 
 dependencies {
   springloaded "org.springsource.springloaded:springloaded-core:1.1.4"
-  compile "io.ratpack:ratpack-h2:0.9.2-SNAPSHOT"
-  compile "io.ratpack:ratpack-hikari:0.9.2-SNAPSHOT"
-  compile "io.ratpack:ratpack-jackson:0.9.2-SNAPSHOT"
+  compile "io.ratpack:ratpack-h2:0.9.3-SNAPSHOT"
+  compile "io.ratpack:ratpack-hikari:0.9.3-SNAPSHOT"
+  compile "io.ratpack:ratpack-jackson:0.9.3-SNAPSHOT"
   testCompile "org.spockframework:spock-core:0.7-groovy-2.0", {
       exclude module: "groovy-all"
   }
@@ -31,10 +31,10 @@ dependencies {
   // Required for mocking multi arg constructor e.g. BookService
   testRuntime "org.objenesis:objenesis:1.2"
   testCompile "org.seleniumhq.selenium:selenium-firefox-driver:2.37.1"
-  compile "io.ratpack:ratpack-remote:0.9.2-SNAPSHOT"
-  testCompile "io.ratpack:ratpack-remote-test:0.9.2-SNAPSHOT"
-  compile "io.ratpack:ratpack-codahale-metrics:0.9.2-SNAPSHOT"
-  compile "io.ratpack:ratpack-rx:0.9.2-SNAPSHOT"
+  compile "io.ratpack:ratpack-remote:0.9.3-SNAPSHOT"
+  testCompile "io.ratpack:ratpack-remote-test:0.9.3-SNAPSHOT"
+  compile "io.ratpack:ratpack-codahale-metrics:0.9.3-SNAPSHOT"
+  compile "io.ratpack:ratpack-rx:0.9.3-SNAPSHOT"
 }
 
 // The Groovy that rest-assured drags in via ratpack-groovy-test is toxic, prevent it from coming in
