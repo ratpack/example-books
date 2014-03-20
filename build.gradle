@@ -21,9 +21,16 @@ repositories {
 
 dependencies {
   springloaded "org.springsource.springloaded:springloaded-core:1.1.4"
+
   compile ratpack.dependency("h2")
   compile ratpack.dependency("hikari")
   compile ratpack.dependency("jackson")
+  compile ratpack.dependency("remote")
+  compile ratpack.dependency("codahale-metrics")
+  compile ratpack.dependency("rx")
+  compile ratpack.dependency("pac4j")
+  compile "org.pac4j:pac4j-http:1.4.1"
+
   testCompile "org.spockframework:spock-core:0.7-groovy-2.0", {
       exclude module: "groovy-all"
   }
@@ -31,10 +38,7 @@ dependencies {
   // Required for mocking multi arg constructor e.g. BookService
   testRuntime "org.objenesis:objenesis:1.2"
   testCompile "org.seleniumhq.selenium:selenium-firefox-driver:2.40.0"
-  compile ratpack.dependency("remote")
   testCompile ratpack.dependency("remote-test")
-  compile ratpack.dependency("codahale-metrics")
-  compile ratpack.dependency("rx")
 }
 
 // The Groovy that rest-assured drags in via ratpack-groovy-test is toxic, prevent it from coming in

@@ -1,3 +1,5 @@
+import org.pac4j.http.client.FormClient
+import org.pac4j.http.credentials.SimpleTestUsernamePasswordAuthenticator
 import ratpack.codahale.metrics.CodaHaleMetricsModule
 import ratpack.codahale.metrics.HealthCheckHandler
 import ratpack.codahale.metrics.MetricsWebsocketBroadcastHandler
@@ -6,8 +8,11 @@ import ratpack.form.Form
 import ratpack.groovy.sql.SqlModule
 import ratpack.hikari.HikariModule
 import ratpack.jackson.JacksonModule
+import ratpack.pac4j.Pac4jModule
 import ratpack.remote.RemoteControlModule
 import ratpack.rx.RxModule
+import ratpack.session.SessionModule
+import ratpack.session.store.MapSessionsModule
 
 import static ratpack.groovy.Groovy.groovyTemplate
 import static ratpack.groovy.Groovy.ratpack
@@ -22,6 +27,9 @@ ratpack {
         register new BookModule()
         register new RemoteControlModule()
         register new RxModule()
+        register new SessionModule()
+        register new MapSessionsModule(10, 5)
+        register new Pac4jModule<>(new FormClient("/login", new SimpleTestUsernamePasswordAuthenticator()), new AuthPathAuthorizer())
         bind DatabaseHealthCheck
 
         init { BookService bookService ->
@@ -106,6 +114,10 @@ ratpack {
             get("metrics") {
                 render groovyTemplate("metrics.html", title: "Metrics")
             }
+        }
+
+        handler("login") {
+            render groovyTemplate("login.html", title: "Login")
         }
 
         assets "public"
