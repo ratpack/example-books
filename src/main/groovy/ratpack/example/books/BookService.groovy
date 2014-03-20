@@ -17,7 +17,8 @@ class BookService {
     }
 
     void createTable() {
-        sql.executeInsert("create table if not exists books (id int primary key auto_increment, title varchar(255), content varchar(255))")
+        sql.executeInsert("drop table if exists books")
+        sql.executeInsert("create table books (id int primary key auto_increment, title varchar(255), content varchar(255))")
     }
 
     rx.Observable<Book> all() {

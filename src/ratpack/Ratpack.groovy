@@ -1,6 +1,6 @@
 import ratpack.codahale.metrics.CodaHaleMetricsModule
 import ratpack.codahale.metrics.HealthCheckHandler
-import ratpack.codahale.metrics.MetricsHandler
+import ratpack.codahale.metrics.MetricsWebsocketBroadcastHandler
 import ratpack.example.books.*
 import ratpack.form.Form
 import ratpack.groovy.sql.SqlModule
@@ -101,7 +101,7 @@ ratpack {
 
         prefix("admin") {
             get("health-check/:name?", new HealthCheckHandler())
-            get("metrics-report", new MetricsHandler())
+            get("metrics-report", new MetricsWebsocketBroadcastHandler())
 
             get("metrics") {
                 render groovyTemplate("metrics.html", title: "Metrics")

@@ -15,10 +15,7 @@ class BookRestEndpointUnitSpec extends Specification {
         given:
         def book = new Book(0, "foo", "bar")
 
-        rx.Observable<Book> findObservable = rx.Observable.create { rx.Observer observer ->
-            observer.onNext(book)
-            observer.onCompleted()
-        }
+        rx.Observable<Book> findObservable = rx.Observable.just(book)
 
         def bookServices = Mock(BookService)
         bookServices.find(0) >> findObservable
@@ -44,10 +41,7 @@ class BookRestEndpointUnitSpec extends Specification {
 
     def "will return 404 if book not found"() {
         given:
-        rx.Observable<Book> findObservable = rx.Observable.create { rx.Observer observer ->
-            observer.onNext(null)
-            observer.onCompleted()
-        }
+        rx.Observable<Book> findObservable = rx.Observable.just(null)
 
         def bookServices = Mock(BookService)
         bookServices.find(0) >> findObservable
@@ -73,10 +67,7 @@ class BookRestEndpointUnitSpec extends Specification {
 
     def "will delete book"() {
         given:
-        rx.Observable<Book> deleteObservable = rx.Observable.create { rx.Observer observer ->
-            observer.onNext(null)
-            observer.onCompleted()
-        }
+        rx.Observable<Book> deleteObservable = rx.Observable.just(null)
 
         def bookServices = Mock(BookService)
         1 * bookServices.delete(0) >> deleteObservable
