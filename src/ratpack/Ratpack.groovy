@@ -20,7 +20,7 @@ import static ratpack.jackson.Jackson.json
 
 ratpack {
     modules {
-        register new CodaHaleMetricsModule().jvmMetrics().jmx().websocket()
+        register new CodaHaleMetricsModule().jvmMetrics().jmx().websocket().healthChecks()
         register new HikariModule([URL: "jdbc:h2:mem:dev;INIT=CREATE SCHEMA IF NOT EXISTS DEV"], "org.h2.jdbcx.JdbcDataSource")
         register new SqlModule()
         register new JacksonModule()
