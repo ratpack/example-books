@@ -1,3 +1,4 @@
+import org.pac4j.core.profile.UserProfile
 import org.pac4j.http.client.FormClient
 import org.pac4j.http.credentials.SimpleTestUsernamePasswordAuthenticator
 import ratpack.codahale.metrics.CodaHaleMetricsModule
@@ -13,13 +14,16 @@ import ratpack.remote.RemoteControlModule
 import ratpack.rx.RxModule
 import ratpack.session.SessionModule
 import ratpack.session.store.MapSessionsModule
+import ratpack.session.store.SessionStorage
 
 import static ratpack.groovy.Groovy.groovyTemplate
 import static ratpack.groovy.Groovy.ratpack
 import static ratpack.jackson.Jackson.json
+import static ratpack.pac4j.internal.SessionConstants.USER_PROFILE
 
 ratpack {
     modules {
+        bind DatabaseHealthCheck
         register new CodaHaleMetricsModule().jvmMetrics().jmx().websocket().healthChecks()
         register new HikariModule([URL: "jdbc:h2:mem:dev;INIT=CREATE SCHEMA IF NOT EXISTS DEV"], "org.h2.jdbcx.JdbcDataSource")
         register new SqlModule()
@@ -30,7 +34,6 @@ ratpack {
         register new SessionModule()
         register new MapSessionsModule(10, 5)
         register new Pac4jModule<>(new FormClient("/login", new SimpleTestUsernamePasswordAuthenticator()), new AuthPathAuthorizer())
-        bind DatabaseHealthCheck
 
         init { BookService bookService ->
             bookService.createTable()
@@ -43,7 +46,15 @@ ratpack {
            bookService.all()
            .toList()
            .subscribe { List<Book> books ->
-                render groovyTemplate("listing.html", title: "Books", books: books, msg: request.queryParams.msg ?: "")
+                SessionStorage sessionStorage = request.get(SessionStorage)
+                UserProfile profile = sessionStorage.get(USER_PROFILE)
+                def username = profile?.getAttribute("username")
+
+                render groovyTemplate("listing.html",
+                        username: username ?: "",
+                        title: "Books",
+                        books: books,
+                        msg: request.queryParams.msg ?: "")
            }
         }
 
@@ -117,7 +128,7 @@ ratpack {
         }
 
         handler("login") {
-            render groovyTemplate("login.html", title: "Login")
+            render groovyTemplate("login.html", title: "Login", error: request.queryParams.error ?: "")
         }
 
         assets "public"

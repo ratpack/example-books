@@ -1,3 +1,9 @@
+<% if (model.error) { %>
+<div class="alert alert-danger alert-dismissable">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+    $model.error
+</div>
+<% } %>
 <form class="form-horizontal" role="form" method="${model.method}" action="${model.action}">
     <div class="form-group">
         <label for="username" class="col-sm-2 control-label">Username</label>

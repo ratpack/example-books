@@ -3,12 +3,13 @@ package ratpack.example.books
 import com.codahale.metrics.annotation.Timed
 import com.codahale.metrics.health.HealthCheck
 import com.google.inject.Inject
+import groovy.sql.Sql
 import ratpack.codahale.metrics.NamedHealthCheck
 
 class DatabaseHealthCheck extends NamedHealthCheck {
 
     @Inject
-    BookService bookService
+    Sql sql
 
     public String getName() {
         return "Database-Health-Check"
@@ -17,10 +18,7 @@ class DatabaseHealthCheck extends NamedHealthCheck {
     @Override
     @Timed
     protected HealthCheck.Result check() throws Exception {
-        bookService.all()
-        .toBlockingObservable()
-        .first()
-
+        sql.rows("select count(*) from books")
         HealthCheck.Result.healthy()
     }
 }

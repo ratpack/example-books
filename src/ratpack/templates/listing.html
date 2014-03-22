@@ -1,8 +1,20 @@
 <% render "_head.html" %>
+
+<% if (model.username) { %>
+<p class="navbar-text navbar-right"><span class="glyphicon glyphicon-user"></span> Signed in as, <strong>$model.username</strong></p>
+<% } else { %>
+<ul class="nav nav-pills pull-right">
+    <li><a href="/login">Sign in</a></li>
+</ul>
+<% } %>
+
+
 <h1>Books</h1>
 <nav class="navbar navbar-default">
     <ul class="nav navbar-nav nav-pills">
         <li><a href="/create">Create Book</a></li>
+        <li <% if (!model.username) { %>class="disabled" <% } %>><a href="/admin/metrics">Metrics Dashboard</a></li>
+        <li <% if (!model.username) { %>class="disabled" <% } %>><a href="/admin/health-check">Run Health Checks</a></li>
     </ul>
 </nav>
 <table class="table table-striped table-bordered">
