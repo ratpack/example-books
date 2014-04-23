@@ -11,7 +11,7 @@ import ratpack.hikari.HikariModule
 import ratpack.jackson.JacksonModule
 import ratpack.pac4j.Pac4jModule
 import ratpack.remote.RemoteControlModule
-import ratpack.rx.RxModule
+import ratpack.rx.RxRatpack
 import ratpack.session.SessionModule
 import ratpack.session.store.MapSessionsModule
 import ratpack.session.store.SessionStorage
@@ -30,12 +30,12 @@ ratpack {
         register new JacksonModule()
         register new BookModule()
         register new RemoteControlModule()
-        register new RxModule()
         register new SessionModule()
         register new MapSessionsModule(10, 5)
         register new Pac4jModule<>(new FormClient("/login", new SimpleTestUsernamePasswordAuthenticator()), new AuthPathAuthorizer())
 
         init { BookService bookService ->
+            RxRatpack.initialize()
             bookService.createTable()
         }
     }

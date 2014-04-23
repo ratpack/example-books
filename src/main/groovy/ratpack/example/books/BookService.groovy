@@ -1,19 +1,24 @@
 package ratpack.example.books
 
 import groovy.sql.Sql
-import ratpack.rx.RxBackground
+import ratpack.exec.Promise
+import ratpack.launch.LaunchConfig
+import rx.Observable
 
 import javax.inject.Inject
+
+import static ratpack.rx.RxRatpack.observe
+import static ratpack.rx.RxRatpack.observeEach
 
 class BookService {
 
     private final Sql sql
-    private final RxBackground rxBackground
+    private final LaunchConfig launchConfig
 
     @Inject
-    BookService(Sql sql, RxBackground rxBackground) {
+    BookService(Sql sql, LaunchConfig launchConfig) {
         this.sql = sql
-        this.rxBackground = rxBackground
+        this.launchConfig = launchConfig
     }
 
     void createTable() {
@@ -21,42 +26,44 @@ class BookService {
         sql.executeInsert("create table books (id int primary key auto_increment, title varchar(255), content varchar(255))")
     }
 
-    rx.Observable<Book> all() {
-        rxBackground.observeEach() {
+    private <T> Promise<T> blocking(GroovyCallable<T> blockingOperation) {
+        return launchConfig.execController.blocking(blockingOperation)
+    }
+
+    Observable<Book> all() {
+        observeEach(blocking {
             sql.rows("select id, title, content from books order by id")
-        } map{
+        }) map {
             new Book(it.id, it.title, it.content)
         }
     }
 
-    rx.Observable<Long> insert(String title, String content) {
-        rxBackground.observeEach() {
+    Observable<Long> insert(String title, String content) {
+        observeEach(blocking {
             sql.executeInsert("insert into books (title, content) values ($title, $content)")
-        }
-        .first()
-        .map {
+        }).first().map {
             it[0] as long
         }
     }
 
-    rx.Observable<Book> find(long id) {
-        rxBackground.observe {
+    Observable<Book> find(long id) {
+        observe(blocking {
             sql.firstRow("select title, content from books where id = $id order by id")
-        } map{
+        }) map {
             it == null ? null : new Book(id, it.title, it.content)
         }
     }
 
-    rx.Observable<Void> update(long id, String title, String content) {
-        rxBackground.observe {
+    Observable<Void> update(long id, String title, String content) {
+        observe(blocking {
             sql.executeUpdate("update books set title = $title, content = $content where id = $id")
-        }
+        })
     }
 
-    rx.Observable<Void> delete(long id) {
-        rxBackground.observe {
+    Observable<Void> delete(long id) {
+        observe(blocking {
             sql.executeUpdate("delete from books where id = $id")
-        }
+        })
     }
 
 }

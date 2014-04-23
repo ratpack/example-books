@@ -7,7 +7,7 @@ import ratpack.path.PathBinding
 import ratpack.path.PathTokens
 import spock.lang.Specification
 
-import static ratpack.groovy.test.GroovyUnitTest.invoke
+import static ratpack.groovy.test.GroovyUnitTest.handle
 
 class BookRestEndpointUnitSpec extends Specification {
 
@@ -27,14 +27,16 @@ class BookRestEndpointUnitSpec extends Specification {
         pathBinding.getTokens() >> pathTokens
 
         when:
-        def invocation = invoke(new BookRestEndpoint(bookServices)) {
+        def result = handle(new BookRestEndpoint(bookServices)) {
             method "get"
             header "Accept", "application/json"
-            register pathBinding
+            registry {
+                add pathBinding
+            }
         }
 
         then:
-        with(invocation) {
+        with(result) {
             rendered(Book) == book
         }
     }
@@ -53,14 +55,16 @@ class BookRestEndpointUnitSpec extends Specification {
         pathBinding.getTokens() >> pathTokens
 
         when:
-        def invocation = invoke(new BookRestEndpoint(bookServices)) {
+        def result = handle(new BookRestEndpoint(bookServices)) {
             method "get"
             header "Accept", "application/json"
-            register pathBinding
+            registry {
+                add pathBinding
+            }
         }
 
         then:
-        with(invocation) {
+        with(result) {
             clientError == 404
         }
     }
@@ -79,14 +83,16 @@ class BookRestEndpointUnitSpec extends Specification {
         pathBinding.getTokens() >> pathTokens
 
         when:
-        def invocation = invoke(new BookRestEndpoint(bookServices)) {
+        def result = handle(new BookRestEndpoint(bookServices)) {
             method "delete"
             header "Accept", "application/json"
-            register pathBinding
+            registry {
+                add pathBinding
+            }
         }
 
         then:
-        with(invocation) {
+        with(result) {
             bodyText == ""
             status.code == 200
         }
