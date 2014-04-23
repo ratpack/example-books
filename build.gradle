@@ -4,7 +4,7 @@ buildscript {
     jcenter()
   }
   dependencies {
-    classpath 'io.ratpack:ratpack-gradle:0.9.3'
+    classpath 'io.ratpack:ratpack-gradle:0.9.4-SNAPSHOT'
   }
 }
 
@@ -20,7 +20,7 @@ repositories {
 }
 
 dependencies {
-  springloaded "org.springsource.springloaded:springloaded-core:1.1.4"
+  springloaded "org.springsource.loaded:springloaded:1.1.5.RELEASE"
 
   compile ratpack.dependency("h2")
   compile ratpack.dependency("hikari")
@@ -29,7 +29,7 @@ dependencies {
   compile ratpack.dependency("codahale-metrics")
   compile ratpack.dependency("rx")
   compile ratpack.dependency("pac4j")
-  compile "org.pac4j:pac4j-http:1.4.1"
+  compile "org.pac4j:pac4j-http:1.5.0"
 
   testCompile "org.spockframework:spock-core:0.7-groovy-2.0", {
       exclude module: "groovy-all"
