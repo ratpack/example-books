@@ -29,19 +29,29 @@ class BookApiSpec extends Specification {
 
     def "create book"() {
         when:
-        request.contentType("application/json").body(title: "t", content: "c")
+        request.contentType("application/json").body(isbn: "1932394842", quantity: 10, price: 22.34)
         post("api/book")
 
         then:
+        println response.jsonPath()
         with(response.jsonPath()) {
-            get("title") == "t"
-            get("content") == "c"
+            get("isbn") == "1932394842"
+            get("title") == "Groovy in Action"
+            get("author") == "Dierk Koenig"
+            get("publisher") == "Manning Publications"
+            getInt("quantity") == 10
+            getObject("price", BigDecimal) == 22.34
         }
 
         and:
         resetRequest()
-        with(get("api/books")) {
-            body.jsonPath().getMap("[0]") == [content:"c", id:1, title:"t"]
+        with(get("api/books").body.jsonPath().getMap("[0]")) {
+            get("isbn") == "1932394842"
+            get("title") == "Groovy in Action"
+            get("author") == "Dierk Koenig"
+            get("publisher") == "Manning Publications"
+            get("quantity") == 10
+            get("price").asType(BigDecimal) == 22.34
         }
     }
 

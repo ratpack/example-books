@@ -13,15 +13,15 @@ class BookRestEndpointUnitSpec extends Specification {
 
     def "will render book"() {
         given:
-        def book = new Book(0, "foo", "bar")
+        def book = new Book("1932394842", 10, 22.22, "Groovy in Action", "Dierk Koenig", "Manning Publications")
 
         rx.Observable<Book> findObservable = rx.Observable.just(book)
 
         def bookServices = Mock(BookService)
-        bookServices.find(0) >> findObservable
+        bookServices.find("1932394842") >> findObservable
 
         def pathTokens = Mock(PathTokens)
-        pathTokens.asLong("id") >> 0
+        pathTokens.get("isbn") >> "1932394842"
 
         def pathBinding = Mock(PathBinding)
         pathBinding.getTokens() >> pathTokens
@@ -46,10 +46,10 @@ class BookRestEndpointUnitSpec extends Specification {
         rx.Observable<Book> findObservable = rx.Observable.just(null)
 
         def bookServices = Mock(BookService)
-        bookServices.find(0) >> findObservable
+        bookServices.find("1932394842") >> findObservable
 
         def pathTokens = Mock(PathTokens)
-        pathTokens.asLong("id") >> 0
+        pathTokens.get("isbn") >> "1932394842"
 
         def pathBinding = Mock(PathBinding)
         pathBinding.getTokens() >> pathTokens
@@ -74,10 +74,10 @@ class BookRestEndpointUnitSpec extends Specification {
         rx.Observable<Book> deleteObservable = rx.Observable.just(null)
 
         def bookServices = Mock(BookService)
-        1 * bookServices.delete(0) >> deleteObservable
+        1 * bookServices.delete("1932394842") >> deleteObservable
 
        def pathTokens = Mock(PathTokens)
-        pathTokens.asLong("id") >> 0
+        pathTokens.get("isbn") >> "1932394842"
 
         def pathBinding = Mock(PathBinding)
         pathBinding.getTokens() >> pathTokens

@@ -4,7 +4,10 @@ import groovy.transform.Immutable
 
 @Immutable
 class Book {
-    long id
+    String isbn
+    long quantity
+    BigDecimal price
     String title
-    String content
+    String author
+    String publisher
 }

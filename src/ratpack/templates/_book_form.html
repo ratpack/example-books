@@ -1,14 +1,40 @@
 <form class="form-horizontal" role="form" method="${model.method}" action="${model.action}">
     <div class="form-group">
+        <label for="isbn" class="col-sm-2 control-label">ISBN</label>
+        <div class="col-sm-10">
+            <input type="text" name="isbn" class="form-control" id="isbn" value="$model.isbn" <% if (model.button == "Update") { %>disabled<% }%>>
+        </div>
+    </div>
+    <% if (model.button == "Update") { %>
+    <div class="form-group">
         <label for="title" class="col-sm-2 control-label">Title</label>
         <div class="col-sm-10">
-            <input type="text" name="title" class="form-control" id="title" value="$model.title">
+            <input type="text" name="title" class="form-control" id="title" value="$model.bookTitle" disabled>
         </div>
     </div>
     <div class="form-group">
-        <label for="content" class="col-sm-2 control-label">Content</label>
+        <label for="author" class="col-sm-2 control-label">Author</label>
         <div class="col-sm-10">
-            <textarea rows="10" id="content" name="content" class="form-control">$model.content</textarea>
+            <input type="text" name="author" class="form-control" id="author" value="$model.author" disabled>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="publisher" class="col-sm-2 control-label">Publisher</label>
+        <div class="col-sm-10">
+            <input type="text" name="publisher" class="form-control" id="publisher" value="$model.publisher" disabled>
+        </div>
+    </div>
+    <% }%>
+    <div class="form-group">
+        <label for="quantity" class="col-sm-2 control-label">Quantity</label>
+        <div class="col-sm-10">
+            <input type="text" name="quantity" class="form-control" id="quantity" value="$model.quantity">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="price" class="col-sm-2 control-label">Price</label>
+        <div class="col-sm-10">
+            <input type="text" name="price" class="form-control" id="price" value="$model.price">
         </div>
     </div>
     </div>

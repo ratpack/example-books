@@ -20,28 +20,27 @@ class BookRestEndpoint extends GroovyHandler {
     @Override
     protected void handle(GroovyContext context) {
         context.with {
-            def id = pathTokens.asLong("id")
+            def isbn = pathTokens["isbn"]
 
             byMethod {
                 post {
-                    if (id != null) {
+                    if (isbn != null) {
                         clientError 404
                     } else {
                         def input = parse jsonNode()
-                        bookService.insert(input.get("title").asText(), input.get("content").asText())
-                        .flatMap { Long newId ->
-                            bookService.find(newId)
-                            .single()
-                        }
-                        .subscribe { Book createdBook ->
+                        bookService.insert(
+                                input.get("isbn").asText(),
+                                input.get("quantity").asLong(),
+                                input.get("price").asDouble()
+                        ) flatMap {
+                            bookService.find(it).single()
+                        } subscribe { Book createdBook ->
                             render json(createdBook)
                         }
                     }
                 }
                 get {
-                    bookService.find(id)
-                    .single()
-                    .subscribe { Book book ->
+                    bookService.find(isbn).single().subscribe { Book book ->
                         if (book == null) {
                             clientError 404
                         } else {
@@ -51,18 +50,18 @@ class BookRestEndpoint extends GroovyHandler {
                 }
                 put {
                     def input = parse jsonNode()
-                    bookService.update(id, input.get("title").asText(), input.get("content").asText())
-                    .flatMap {
-                        bookService.find(id)
-                        .single()
-                    }
-                    .subscribe { Book book ->
+                    bookService.update(
+                            isbn,
+                            input.get("quantity").asLong(),
+                            input.get("price").asDouble()
+                    ) flatMap {
+                        bookService.find(isbn).single()
+                    } subscribe { Book book ->
                         render json(book)
                     }
                 }
                 delete {
-                    bookService.delete(id)
-                    .subscribe {
+                    bookService.delete(isbn).subscribe {
                         response.send()
                     }
                 }

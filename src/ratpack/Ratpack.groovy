@@ -43,9 +43,7 @@ ratpack {
     handlers { BookService bookService ->
 
         get {
-           bookService.all()
-           .toList()
-           .subscribe { List<Book> books ->
+           bookService.all().toList().subscribe { List<Book> books ->
                 SessionStorage sessionStorage = request.get(SessionStorage)
                 UserProfile profile = sessionStorage.get(USER_PROFILE)
                 def username = profile?.getAttribute("username")
@@ -64,22 +62,22 @@ ratpack {
                     render groovyTemplate("create.html", title: "Create Book")
                 }
                 post {
-                    def form = parse(Form.class)
-                    bookService.insert(form.title, form.content)
-                    .single()
-                    .subscribe { Long id ->
-                        redirect "/?msg=Book+$id+created"
+                    Form form = parse(Form)
+                    bookService.insert(
+                            form.isbn,
+                            form.get("quantity").asType(Long),
+                            form.get("price").asType(BigDecimal)
+                    ).single().subscribe { String isbn ->
+                        redirect "/?msg=Book+$isbn+created"
                     }
                 }
             }
         }
 
-        handler("update/:id") {
-            def id = pathTokens.asLong("id")
+        handler("update/:isbn") {
+            def isbn = pathTokens["isbn"]
 
-            bookService.find(id)
-            .single()
-            .subscribe { Book book ->
+            bookService.find(isbn).single().subscribe { Book book ->
                 if (book == null) {
                     clientError(404)
                 } else {
@@ -88,10 +86,13 @@ ratpack {
                             render groovyTemplate("update.html", title: "Update Book", book: book)
                         }
                         post {
-                            def form = parse(Form.class)
-                            bookService.update(id, form.title, form.content)
-                            .subscribe {
-                                redirect "/?msg=Book+$id+updated"
+                            Form form = parse(Form)
+                            bookService.update(
+                                    isbn,
+                                    form.get("quantity").asType(Long),
+                                    form.get("price").asType(BigDecimal)
+                            ) subscribe {
+                                redirect "/?msg=Book+$isbn+updated"
                             }
                         }
                     }
@@ -99,23 +100,20 @@ ratpack {
             }
         }
 
-        post("delete/:id") {
-            def id = pathTokens.asLong("id")
-            bookService.delete(id)
-            .subscribe {
-                redirect "/?msg=Book+$id+deleted"
+        post("delete/:isbn") {
+            def isbn = pathTokens["isbn"]
+            bookService.delete(isbn).subscribe {
+                redirect "/?msg=Book+$isbn+deleted"
             }
         }
 
         prefix("api") {
             get("books") {
-                bookService.all()
-                .toList()
-                .subscribe { List<Book> books ->
+                bookService.all().toList().subscribe { List<Book> books ->
                     render json(books)
                 }
             }
-            handler("book/:id?", registry.get(BookRestEndpoint))
+            handler("book/:isbn?", registry.get(BookRestEndpoint))
         }
 
         prefix("admin") {

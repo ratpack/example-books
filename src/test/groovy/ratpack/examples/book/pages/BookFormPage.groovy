@@ -7,7 +7,11 @@ class BookFormPage extends Page {
     static content = {
         heading { $("h1").text() }
         submitButton { $("button[type=submit]") }
+        isbnField { $("#isbn") }
+        quantityField { $("#quantity") }
+        priceField { $("#price") }
         titleField { $("#title") }
-        contentField { $("#content") }
+        authorField { $("#author") }
+        publisherField { $("#publisher") }
     }
 }

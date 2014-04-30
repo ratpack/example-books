@@ -6,7 +6,6 @@ import ratpack.examples.book.pages.BooksPage
 import ratpack.examples.book.pages.CreateBookPage
 import ratpack.examples.book.pages.UpdateBookPage
 import ratpack.groovy.test.LocalScriptApplicationUnderTest
-import ratpack.registry.Registry
 import ratpack.test.ApplicationUnderTest
 import ratpack.test.remote.RemoteControl
 import spock.lang.Shared
@@ -47,8 +46,9 @@ class BookFunctionalSpec extends GebReportingSpec {
 
     def "create book"() {
         when:
-        titleField = "some book"
-        contentField = "some content"
+        isbnField = "1932394842"
+        quantityField = "10"
+        priceField = "10.23"
         createButton.click()
 
         then:
@@ -56,7 +56,12 @@ class BookFunctionalSpec extends GebReportingSpec {
 
         and:
         books.size() == 1
-        books[0].title == "some book"
+        books[0].isbn == "1932394842"
+        books[0].title == "Groovy in Action"
+        books[0].author == "Dierk Koenig"
+        books[0].publisher == "Manning Publications"
+        books[0].price == "10.23"
+        books[0].quantity == "10"
     }
 
     def "update book"() {
@@ -67,8 +72,8 @@ class BookFunctionalSpec extends GebReportingSpec {
         at UpdateBookPage
 
         when:
-        titleField = "changed title"
-        contentField = "changed content"
+        quantityField = "2"
+        priceField = "5.34"
         updateButton.click()
 
         then:
@@ -76,7 +81,12 @@ class BookFunctionalSpec extends GebReportingSpec {
 
         and:
         books.size() == 1
-        books[0].title == "changed title"
+        books[0].isbn == "1932394842"
+        books[0].title == "Groovy in Action"
+        books[0].author == "Dierk Koenig"
+        books[0].publisher == "Manning Publications"
+        books[0].price == "5.34"
+        books[0].quantity == "2"
     }
 
     def "delete book"() {

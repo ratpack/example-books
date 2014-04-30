@@ -16,9 +16,11 @@ class BookRenderer extends GroovyRendererSupport<Book> {
             }
             xml {
                 render markupBuilder("application/xml", "UTF-8") {
-                    delegate.book(id: book.id) {
-                        title book.title
-                        content book.content
+                    delegate.book(isbn: book.isbn) {
+                        quantity book.quantity
+                        price book.price
+                        author book.author
+                        publisher book.publisher
                     }
                 }
             }
