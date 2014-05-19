@@ -33,7 +33,6 @@ class BookApiSpec extends Specification {
         post("api/book")
 
         then:
-        println response.jsonPath()
         with(response.jsonPath()) {
             get("isbn") == "1932394842"
             get("title") == "Groovy in Action"

@@ -8,6 +8,7 @@ import ratpack.example.books.*
 import ratpack.form.Form
 import ratpack.groovy.sql.SqlModule
 import ratpack.hikari.HikariModule
+import ratpack.hystrix.HystrixRatpack
 import ratpack.jackson.JacksonModule
 import ratpack.pac4j.Pac4jModule
 import ratpack.remote.RemoteControlModule
@@ -22,20 +23,21 @@ import static ratpack.jackson.Jackson.json
 import static ratpack.pac4j.internal.SessionConstants.USER_PROFILE
 
 ratpack {
-    modules {
+    bindings {
         bind DatabaseHealthCheck
-        register new CodaHaleMetricsModule().jvmMetrics().jmx().websocket().healthChecks()
-        register new HikariModule([URL: "jdbc:h2:mem:dev;INIT=CREATE SCHEMA IF NOT EXISTS DEV"], "org.h2.jdbcx.JdbcDataSource")
-        register new SqlModule()
-        register new JacksonModule()
-        register new BookModule()
-        register new RemoteControlModule()
-        register new SessionModule()
-        register new MapSessionsModule(10, 5)
-        register new Pac4jModule<>(new FormClient("/login", new SimpleTestUsernamePasswordAuthenticator()), new AuthPathAuthorizer())
+        add new CodaHaleMetricsModule().jvmMetrics().jmx().websocket().healthChecks()
+        add new HikariModule([URL: "jdbc:h2:mem:dev;INIT=CREATE SCHEMA IF NOT EXISTS DEV"], "org.h2.jdbcx.JdbcDataSource")
+        add new SqlModule()
+        add new JacksonModule()
+        add new BookModule()
+        add new RemoteControlModule()
+        add new SessionModule()
+        add new MapSessionsModule(10, 5)
+        add new Pac4jModule<>(new FormClient("/login", new SimpleTestUsernamePasswordAuthenticator()), new AuthPathAuthorizer())
 
         init { BookService bookService ->
             RxRatpack.initialize()
+            HystrixRatpack.initialize()
             bookService.createTable()
         }
     }
@@ -113,6 +115,7 @@ ratpack {
                     render json(books)
                 }
             }
+
             handler("book/:isbn?", registry.get(BookRestEndpoint))
         }
 

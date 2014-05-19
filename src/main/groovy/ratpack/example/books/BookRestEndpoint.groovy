@@ -32,7 +32,7 @@ class BookRestEndpoint extends GroovyHandler {
                                 input.get("isbn").asText(),
                                 input.get("quantity").asLong(),
                                 input.get("price").asDouble()
-                        ) flatMap {
+                        ).single().flatMap {
                             bookService.find(it).single()
                         } subscribe { Book createdBook ->
                             render json(createdBook)
