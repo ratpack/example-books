@@ -30,7 +30,7 @@ dependencies {
   compile ratpack.dependency("rx")
   compile ratpack.dependency("hystrix")
   compile ratpack.dependency("pac4j")
-  compile "org.pac4j:pac4j-http:1.5.0"
+  compile "org.pac4j:pac4j-http:1.5.1"
 
   testCompile "org.spockframework:spock-core:0.7-groovy-2.0", {
       exclude module: "groovy-all"
