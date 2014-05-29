@@ -1,4 +1,6 @@
 import org.pac4j.core.profile.UserProfile
+import org.pac4j.http.client.FormClient
+import org.pac4j.http.credentials.SimpleTestUsernamePasswordAuthenticator
 import ratpack.codahale.metrics.CodaHaleMetricsModule
 import ratpack.codahale.metrics.HealthCheckHandler
 import ratpack.codahale.metrics.MetricsWebsocketBroadcastHandler
@@ -8,6 +10,7 @@ import ratpack.groovy.sql.SqlModule
 import ratpack.hikari.HikariModule
 import ratpack.hystrix.HystrixRatpack
 import ratpack.jackson.JacksonModule
+import ratpack.pac4j.Pac4jModule
 import ratpack.remote.RemoteControlModule
 import ratpack.rx.RxRatpack
 import ratpack.session.SessionModule
@@ -30,7 +33,7 @@ ratpack {
         add new RemoteControlModule()
         add new SessionModule()
         add new MapSessionsModule(10, 5)
-        //add new Pac4jModule<>(new FormClient("/login", new SimpleTestUsernamePasswordAuthenticator()), new AuthPathAuthorizer())
+        add new Pac4jModule<>(new FormClient("/login", new SimpleTestUsernamePasswordAuthenticator()), new AuthPathAuthorizer())
 
         init { BookService bookService ->
             RxRatpack.initialize()
