@@ -9,6 +9,7 @@ This app demonstrates
 * Blocking I/O
 * Async external HTTP requests 
 * RxJava integration
+* Hystrix integration
 
 Setup
 -----
