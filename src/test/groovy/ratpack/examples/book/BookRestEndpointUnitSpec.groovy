@@ -5,11 +5,16 @@ import ratpack.example.books.BookRestEndpoint
 import ratpack.example.books.BookService
 import ratpack.path.PathBinding
 import ratpack.path.PathTokens
+import ratpack.rx.RxRatpack
 import spock.lang.Specification
 
 import static ratpack.groovy.test.GroovyUnitTest.handle
 
 class BookRestEndpointUnitSpec extends Specification {
+
+    def setup() {
+        RxRatpack.initialize()
+    }
 
     def "will render book"() {
         given:
