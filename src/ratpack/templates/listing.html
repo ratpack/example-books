@@ -2,7 +2,9 @@
 <div class="alert alert-info">
     <p>In order to use this application you will need to create a free account and api key with <a href="http://isbndb.com/account/logincreate">ISBNdb</a></p>
     <p>Once you have done this you need to add your api key to the property <code>other.isbndb.apikey</code> in the <code>ratpack.properties</code> file and restart the application</p>
+    <p><code>other.isbndb.apikey</code> is currently set to <code><%= model.isbndbApikey %></code></p>
 </div>
+
 <% if (model.username) { %>
 <p class="navbar-text navbar-right"><span class="glyphicon glyphicon-user"></span> Signed in as, <strong>$model.username</strong></p>
 <% } else { %>
@@ -28,6 +30,7 @@
         <th>Publisher</th>
         <th>Quantity</th>
         <th>Price</th>
+        <th>Actions</th>
     </tr>
     </thead>
     <tbody>

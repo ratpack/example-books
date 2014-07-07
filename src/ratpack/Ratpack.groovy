@@ -4,6 +4,7 @@ import org.pac4j.http.credentials.SimpleTestUsernamePasswordAuthenticator
 import ratpack.codahale.metrics.CodaHaleMetricsModule
 import ratpack.codahale.metrics.HealthCheckHandler
 import ratpack.codahale.metrics.MetricsWebsocketBroadcastHandler
+import ratpack.error.ServerErrorHandler
 import ratpack.example.books.*
 import ratpack.form.Form
 import ratpack.groovy.sql.SqlModule
@@ -40,6 +41,8 @@ ratpack {
             HystrixRatpack.initialize()
             bookService.createTable()
         }
+
+        bind ServerErrorHandler, ErrorHandler
     }
 
     handlers { BookService bookService ->
@@ -49,9 +52,11 @@ ratpack {
                 SessionStorage sessionStorage = request.get(SessionStorage)
                 UserProfile profile = sessionStorage.get(USER_PROFILE)
                 def username = profile?.getAttribute("username")
+                def isbndbApikey = launchConfig.getOther('isbndb.apikey', null)
 
                 render groovyTemplate("listing.html",
                         username: username ?: "",
+                        isbndbApikey: isbndbApikey,
                         title: "Books",
                         books: books,
                         msg: request.queryParams.msg ?: "")

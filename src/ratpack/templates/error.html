@@ -1,0 +1,10 @@
+<% render "_head.html" %>
+<h1>An Exception Occurred</h1>
+<div>
+    <p class="alert alert-danger"><%= model.sanitizedException %></p>
+    <a href="/" class="btn btn-default">Home</a><br/>
+    <samp>
+    <%= model.sanitizedException?.stackTrace?.join '<br/>' %>
+    </samp>
+</div>
+<% render "_footer.html" %>
