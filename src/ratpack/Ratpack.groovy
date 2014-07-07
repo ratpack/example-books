@@ -1,3 +1,4 @@
+import groovy.text.markup.MarkupTemplateEngine
 import org.pac4j.core.profile.UserProfile
 import org.pac4j.http.client.FormClient
 import org.pac4j.http.credentials.SimpleTestUsernamePasswordAuthenticator
@@ -7,6 +8,7 @@ import ratpack.codahale.metrics.MetricsWebsocketBroadcastHandler
 import ratpack.error.ServerErrorHandler
 import ratpack.example.books.*
 import ratpack.form.Form
+import ratpack.groovy.markuptemplates.MarkupTemplatingModule
 import ratpack.groovy.sql.SqlModule
 import ratpack.hikari.HikariModule
 import ratpack.hystrix.HystrixRatpack
@@ -18,6 +20,7 @@ import ratpack.session.SessionModule
 import ratpack.session.store.MapSessionsModule
 import ratpack.session.store.SessionStorage
 
+import static ratpack.groovy.Groovy.groovyMarkupTemplate
 import static ratpack.groovy.Groovy.groovyTemplate
 import static ratpack.groovy.Groovy.ratpack
 import static ratpack.jackson.Jackson.json
@@ -35,6 +38,7 @@ ratpack {
         add new SessionModule()
         add new MapSessionsModule(10, 5)
         add new Pac4jModule<>(new FormClient("/login", new SimpleTestUsernamePasswordAuthenticator()), new AuthPathAuthorizer())
+        add new MarkupTemplatingModule()
 
         init { BookService bookService ->
             RxRatpack.initialize()
@@ -54,7 +58,7 @@ ratpack {
                 def username = profile?.getAttribute("username")
                 def isbndbApikey = launchConfig.getOther('isbndb.apikey', null)
 
-                render groovyTemplate("listing.html",
+                render groovyMarkupTemplate("listing.gtpl",
                         username: username ?: "",
                         isbndbApikey: isbndbApikey,
                         title: "Books",
