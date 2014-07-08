@@ -153,7 +153,12 @@ ratpack {
         }
 
         handler("login") {
-            render groovyTemplate("login.html", title: "Login", error: request.queryParams.error ?: "")
+            render groovyMarkupTemplate("login.gtpl",
+                    title: "Login",
+                    action: '/pac4j-callback',
+                    method: 'get',
+                    buttonText: 'Login',
+                    error: request.queryParams.error ?: "")
         }
 
         assets "public"
