@@ -1,49 +1,55 @@
+def column = [class: 'col-sm-10']
+def columnOffset = [class: 'col-sm-offset-2 col-sm-10']
+def formGroup = [class: 'form-group']
+def controlLabel(id) { [for: id, class: 'col-sm-2 control-label'] }
+def inputText(id, value, opts=[disabled:false]) {
+    def attr = [type: 'text', name: id, class: 'form-control', id: id, value: value]
+    if (opts.disabled) { attr.disabled = 'disabled' }
+    attr
+}
+
 form(class:"form-horizontal", role:"form", method:method, action:action) {
     div(class: "form-group") {
-        label(for:"isbn", class:"col-sm-2 control-label", 'ISBN')
-        div(class: "col-sm-10") {
-            def attributes = [type: 'text', name: "isbn", class: "form-control", id: "isbn", value: isbn]
-            if (buttonText == 'Update') {
-                attributes.disabled = 'disabled'
-            }
-            input (attributes) {}
+        label(controlLabel('isbn'), 'ISBN')
+        div(column) {
+            input (inputText('isbn', isbn, [disabled: buttonText == 'Update'])) {}
         }
     }
 
 if (buttonText == "Update") {
-    div(class: 'form-group') {
-        label(for: "title", class: "col-sm-2 control-label", 'Title')
-        div(class: 'col-sm-10') {
-            input (type: 'text', name: 'title', class: 'form-control', id: 'title', value: bookTitle, disabled: 'disabled') {}
+    div(formGroup) {
+        label(controlLabel('title'), 'Title')
+        div(column) {
+            input (inputText('title', bookTitle, [disabled: true])) {}
         }
     }
-    div(class: 'form-group') {
-        label(for: "author", class: "col-sm-2 control-label", 'Author')
-        div(class: 'col-sm-10') {
-            input (type: 'text', name: 'author', class: 'form-control', id: 'author', value: author, disabled: 'disabled') {}
+    div(formGroup) {
+        label(controlLabel('author'), 'Author')
+        div(column) {
+            input (inputText('author', author, [disabled: true])) {}
         }
     }
-    div(class: 'form-group') {
-        label(for: "publisher", class: "col-sm-2 control-label", 'Publisher')
-        div(class: 'col-sm-10') {
-            input (type: 'text', name: 'publisher', class: 'form-control', id: 'publisher', value: publisher, disabled: 'disabled') {}
+    div(formGroup) {
+        label(controlLabel('publisher'), 'Publisher')
+        div(column) {
+            input(inputText('publisher', publisher, [disabled: true]))
         }
     }
 }
-    div(class: 'form-group') {
-        label(for: "quantity", class: "col-sm-2 control-label", 'Quantity')
-        div(class: 'col-sm-10') {
-            input (type: "text", name: "quantity", class: "form-control", id: "quantity", value: quantity) {}
+    div(formGroup) {
+        label(controlLabel('quantity'), 'Quantity')
+        div(column) {
+            input(inputText('quantity', quantity))
         }
     }
-    div(class: 'form-group') {
-        label(for: "price", class: "col-sm-2 control-label", 'Price')
-        div(class: 'col-sm-10') {
-            input (type: "text", name: "price", class: "form-control", id: "price", value: price) {}
+    div(formGroup) {
+        label(controlLabel('price'), 'Price')
+        div(column) {
+            input(inputText('price', price))
         }
     }
-    div(class: 'form-group') {
-        div(class: "col-sm-offset-2 col-sm-10") {
+    div(formGroup) {
+        div(columnOffset) {
             button(type: "submit", class: "btn btn-primary", buttonText)
             a(href: "/", class: "btn btn-default", 'Back')
         }
