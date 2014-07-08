@@ -1,4 +1,3 @@
-import groovy.text.markup.MarkupTemplateEngine
 import org.pac4j.core.profile.UserProfile
 import org.pac4j.http.client.FormClient
 import org.pac4j.http.credentials.SimpleTestUsernamePasswordAuthenticator
@@ -20,9 +19,7 @@ import ratpack.session.SessionModule
 import ratpack.session.store.MapSessionsModule
 import ratpack.session.store.SessionStorage
 
-import static ratpack.groovy.Groovy.groovyMarkupTemplate
-import static ratpack.groovy.Groovy.groovyTemplate
-import static ratpack.groovy.Groovy.ratpack
+import static ratpack.groovy.Groovy.*
 import static ratpack.jackson.Jackson.json
 import static ratpack.pac4j.internal.SessionConstants.USER_PROFILE
 
@@ -102,9 +99,17 @@ ratpack {
                 } else {
                     byMethod {
                         get {
-                            render groovyTemplate("update.html",
+                            render groovyMarkupTemplate("update.gtpl",
                                     title: "Update Book",
-                                    book: book)
+                                    method: 'post',
+                                    action: '',
+                                    buttonText: 'Update',
+                                    isbn: book.isbn,
+                                    bookTitle: book.title,
+                                    author: book.author,
+                                    publisher: book.publisher,
+                                    quantity: book.quantity,
+                                    price: book.price)
                         }
                         post {
                             Form form = parse(Form)
