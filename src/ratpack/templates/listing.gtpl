@@ -1,4 +1,5 @@
 layout 'layout.gtpl',
+title: title,
 msg: msg,
 bodyContents: contents {
     div(class: 'alert alert-info') {
@@ -16,7 +17,7 @@ bodyContents: contents {
         p {
             code('other.isbndb.apikey')
             yield ' is currently set to '
-            code(isbndbApikey)
+            code { yield isbndbApikey }
         }
     }
 

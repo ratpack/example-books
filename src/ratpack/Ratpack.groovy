@@ -70,7 +70,15 @@ ratpack {
         handler("create") {
             byMethod {
                 get {
-                    render groovyTemplate("create.html", title: "Create Book")
+                    render groovyMarkupTemplate("create.gtpl",
+                            title: "Create Book",
+                            isbn: '',
+                            quantity: '',
+                            price: '',
+                            method: 'post',
+                            action: '',
+                            buttonText: 'Create'
+                    )
                 }
                 post {
                     Form form = parse(Form)
@@ -94,7 +102,9 @@ ratpack {
                 } else {
                     byMethod {
                         get {
-                            render groovyTemplate("update.html", title: "Update Book", book: book)
+                            render groovyTemplate("update.html",
+                                    title: "Update Book",
+                                    book: book)
                         }
                         post {
                             Form form = parse(Form)
