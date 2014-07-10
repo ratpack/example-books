@@ -17,7 +17,7 @@ bodyContents: contents {
         p {
             code('other.isbndb.apikey')
             yield ' is currently set to '
-            code { yield isbndbApikey }
+            code(isbndbApikey)
         }
     }
 
