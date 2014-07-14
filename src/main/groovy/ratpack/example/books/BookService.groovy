@@ -25,7 +25,6 @@ class BookService {
     Observable<Book> all() {
         bookDbCommands.getAll().flatMap {
             isbnDbCommands.getBookRequest(it.isbn).map { ReceivedResponse resp ->
-                resp.body.buffer.retain()
                 def result = new JsonSlurper().parseText(resp.body.text)
                 return new Book(
                         it.isbn,

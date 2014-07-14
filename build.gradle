@@ -32,6 +32,8 @@ dependencies {
   compile ratpack.dependency("pac4j")
   compile "org.pac4j:pac4j-http:1.5.1"
 
+  runtime 'org.slf4j:slf4j-simple:1.7.7'
+
   testCompile "org.spockframework:spock-core:0.7-groovy-2.0", {
       exclude module: "groovy-all"
   }
