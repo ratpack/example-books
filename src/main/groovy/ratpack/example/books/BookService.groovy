@@ -2,11 +2,13 @@ package ratpack.example.books
 
 import groovy.json.JsonSlurper
 import groovy.sql.GroovyRowResult
+import groovy.util.logging.Slf4j
 import ratpack.http.client.ReceivedResponse
 import rx.Observable
 
 import javax.inject.Inject
 
+@Slf4j
 class BookService {
 
     private final BookDbCommands bookDbCommands
@@ -19,6 +21,7 @@ class BookService {
     }
 
     void createTable() {
+        log.info("Creating database tables")
         bookDbCommands.createTables()
     }
 

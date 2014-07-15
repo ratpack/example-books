@@ -10,6 +10,8 @@ This app demonstrates
 * Async external HTTP requests 
 * RxJava integration
 * Hystrix integration
+* WebSockets
+* Async logging
 
 Setup
 -----

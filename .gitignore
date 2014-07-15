@@ -7,3 +7,5 @@ build
 out
 .project
 .classpath
+*.log
+*.log.gz
