@@ -12,7 +12,7 @@ class ErrorHandler implements ServerErrorHandler {
 
     @Override
     void error(Context context, Exception exception) {
-        log.warn "Problems yo"
+        log.warn "Problems yo", exception
         context.with {
             render groovyMarkupTemplate("error.gtpl",
                     title: 'Exception',
