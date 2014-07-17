@@ -1,8 +1,0 @@
-<% render "_head.html" %>
-<h1>Create Book</h1>
-<div class="alert alert-info">
-    <p>In order to add a new book you need to use an ISBN that is available on <a href="http://isbndb.com">ISBNdb</a> e.g. 1932394842</p>
-    <p><strong>n.b. all fields are mandatory</strong></p>
-</div>
-<% render "_book_form.html", isbn: "", quantity: "", price: "", action: "", method: "post", button: "Create" %>
-<% render "_footer.html" %>
