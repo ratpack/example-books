@@ -5,7 +5,7 @@ import org.codehaus.groovy.runtime.StackTraceUtils
 import ratpack.error.ServerErrorHandler
 import ratpack.handling.Context
 
-import static ratpack.groovy.Groovy.groovyTemplate
+import static ratpack.groovy.Groovy.groovyMarkupTemplate
 
 @Slf4j
 class ErrorHandler implements ServerErrorHandler {
@@ -14,7 +14,7 @@ class ErrorHandler implements ServerErrorHandler {
     void error(Context context, Exception exception) {
         log.warn "Problems yo"
         context.with {
-            render groovyTemplate("error.html",
+            render groovyMarkupTemplate("error.gtpl",
                     title: 'Exception',
                     exception: exception,
                     sanitizedException: StackTraceUtils.deepSanitize(exception))

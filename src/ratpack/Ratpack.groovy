@@ -7,6 +7,7 @@ import ratpack.codahale.metrics.MetricsWebsocketBroadcastHandler
 import ratpack.error.ServerErrorHandler
 import ratpack.example.books.*
 import ratpack.form.Form
+import ratpack.groovy.markuptemplates.MarkupTemplatingModule
 import ratpack.groovy.sql.SqlModule
 import ratpack.hikari.HikariModule
 import ratpack.hystrix.HystrixRatpack
@@ -18,8 +19,7 @@ import ratpack.session.SessionModule
 import ratpack.session.store.MapSessionsModule
 import ratpack.session.store.SessionStorage
 
-import static ratpack.groovy.Groovy.groovyTemplate
-import static ratpack.groovy.Groovy.ratpack
+import static ratpack.groovy.Groovy.*
 import static ratpack.jackson.Jackson.json
 import static ratpack.pac4j.internal.SessionConstants.USER_PROFILE
 
@@ -35,6 +35,7 @@ ratpack {
         add new SessionModule()
         add new MapSessionsModule(10, 5)
         add new Pac4jModule<>(new FormClient("/login", new SimpleTestUsernamePasswordAuthenticator()), new AuthPathAuthorizer())
+        add new MarkupTemplatingModule()
 
         init { BookService bookService ->
             RxRatpack.initialize()
@@ -54,7 +55,7 @@ ratpack {
                 def username = profile?.getAttribute("username")
                 def isbndbApikey = launchConfig.getOther('isbndb.apikey', null)
 
-                render groovyTemplate("listing.html",
+                render groovyMarkupTemplate("listing.gtpl",
                         username: username ?: "",
                         isbndbApikey: isbndbApikey,
                         title: "Books",
@@ -66,7 +67,15 @@ ratpack {
         handler("create") {
             byMethod {
                 get {
-                    render groovyTemplate("create.html", title: "Create Book")
+                    render groovyMarkupTemplate("create.gtpl",
+                            title: "Create Book",
+                            isbn: '',
+                            quantity: '',
+                            price: '',
+                            method: 'post',
+                            action: '',
+                            buttonText: 'Create'
+                    )
                 }
                 post {
                     Form form = parse(Form)
@@ -90,7 +99,17 @@ ratpack {
                 } else {
                     byMethod {
                         get {
-                            render groovyTemplate("update.html", title: "Update Book", book: book)
+                            render groovyMarkupTemplate("update.gtpl",
+                                    title: "Update Book",
+                                    method: 'post',
+                                    action: '',
+                                    buttonText: 'Update',
+                                    isbn: book.isbn,
+                                    bookTitle: book.title,
+                                    author: book.author,
+                                    publisher: book.publisher,
+                                    quantity: book.quantity,
+                                    price: book.price)
                         }
                         post {
                             Form form = parse(Form)
@@ -134,7 +153,12 @@ ratpack {
         }
 
         handler("login") {
-            render groovyTemplate("login.html", title: "Login", error: request.queryParams.error ?: "")
+            render groovyMarkupTemplate("login.gtpl",
+                    title: "Login",
+                    action: '/pac4j-callback',
+                    method: 'get',
+                    buttonText: 'Login',
+                    error: request.queryParams.error ?: "")
         }
 
         assets "public"

@@ -4,7 +4,7 @@ buildscript {
     jcenter()
   }
   dependencies {
-    classpath 'io.ratpack:ratpack-gradle:0.9.6'
+    classpath 'io.ratpack:ratpack-gradle:0.9.7'
   }
 }
 
