@@ -25,18 +25,9 @@ class IsbnDbCommands {
         return new HystrixObservableCommand<ReceivedResponse>(HystrixCommandGroupKey.Factory.asKey("http-isbndb")) {
             @Override
             protected rx.Observable<ReceivedResponse> run() {
-                return observe(HttpClients.httpClient(launchConfig)
-                    .get(new Action<RequestSpec>() {
-                        @Override
-                        void execute(RequestSpec request) throws Exception {
-                            request.url(new Action<HttpUrlSpec>() {
-                                @Override
-                                void execute(HttpUrlSpec httpUrlSpec) throws Exception {
-                                    httpUrlSpec.set("http://isbndb.com/api/v2/json/${launchConfig.getOther('isbndb.apikey', '')}/book/$isbn".toURI())
-                                }
-                            })
-                        }
-                    }))
+                return observe(HttpClients.httpClient(launchConfig).get({ RequestSpec request ->
+                    request.url.set("http://isbndb.com/api/v2/json/${launchConfig.getOther('isbndb.apikey', '')}/book/$isbn".toURI())
+                }))
             }
 
             @Override
