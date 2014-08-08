@@ -29,7 +29,7 @@ bodyContents: contents {
 
     script(type: "text/javascript", src :  "http://www.google.com/jsapi", charset: "utf-8") {}
     script(type: "text/javascript") {
-        yield '''
+        yieldUnescaped '''
         google.load("visualization", "1", { packages: ["piechart", "corechart", "gauge"]});
         '''
     }

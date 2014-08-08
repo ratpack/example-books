@@ -1,6 +1,8 @@
 import org.pac4j.core.profile.UserProfile
 import org.pac4j.http.client.FormClient
 import org.pac4j.http.credentials.SimpleTestUsernamePasswordAuthenticator
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import ratpack.codahale.metrics.CodaHaleMetricsModule
 import ratpack.codahale.metrics.HealthCheckHandler
 import ratpack.codahale.metrics.MetricsWebsocketBroadcastHandler
@@ -19,9 +21,12 @@ import ratpack.session.SessionModule
 import ratpack.session.store.MapSessionsModule
 import ratpack.session.store.SessionStorage
 
-import static ratpack.groovy.Groovy.*
+import static ratpack.groovy.Groovy.groovyMarkupTemplate
+import static ratpack.groovy.Groovy.ratpack
 import static ratpack.jackson.Jackson.json
 import static ratpack.pac4j.internal.SessionConstants.USER_PROFILE
+
+final Logger log = LoggerFactory.getLogger(Ratpack.class);
 
 ratpack {
     bindings {
@@ -38,6 +43,7 @@ ratpack {
         add new MarkupTemplatingModule()
 
         init { BookService bookService ->
+            log.info("Initializing")
             RxRatpack.initialize()
             HystrixRatpack.initialize()
             bookService.createTable()
@@ -83,7 +89,7 @@ ratpack {
                             form.isbn,
                             form.get("quantity").asType(Long),
                             form.get("price").asType(BigDecimal)
-                    ).single().subscribe { String isbn ->
+                    ).single().subscribe() { String isbn ->
                         redirect "/?msg=Book+$isbn+created"
                     }
                 }
@@ -148,7 +154,7 @@ ratpack {
             get("metrics-report", new MetricsWebsocketBroadcastHandler())
 
             get("metrics") {
-                render groovyTemplate("metrics.html", title: "Metrics")
+                render groovyMarkupTemplate("metrics.gtpl", title: "Metrics")
             }
         }
 
