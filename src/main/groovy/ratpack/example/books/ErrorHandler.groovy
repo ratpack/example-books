@@ -11,13 +11,15 @@ import static ratpack.groovy.Groovy.groovyMarkupTemplate
 class ErrorHandler implements ServerErrorHandler {
 
     @Override
-    void error(Context context, Exception exception) {
-        log.warn "Problems yo", exception
+    void error(Context context, Throwable throwable) {
+        log.warn "Problems yo", throwable
         context.with {
             render groovyMarkupTemplate("error.gtpl",
                     title: 'Exception',
-                    exception: exception,
-                    sanitizedException: StackTraceUtils.deepSanitize(exception))
+                    exception: throwable,
+                    sanitizedException: StackTraceUtils.deepSanitize(throwable))
         }
     }
+
+
 }
