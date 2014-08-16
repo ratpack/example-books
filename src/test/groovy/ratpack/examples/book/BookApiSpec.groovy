@@ -38,7 +38,7 @@ class BookApiSpec extends Specification {
         when:
         requestSpec { RequestSpec requestSpec ->
             requestSpec.body.type("application/json")
-            requestSpec.body.stream({ it << JsonOutput.toJson([isbn: "1932394842", quantity: 10, price: 22.34]) })
+            requestSpec.body.text(JsonOutput.toJson([isbn: "1932394842", quantity: 10, price: 22.34]))
         }
         post("api/book")
 
