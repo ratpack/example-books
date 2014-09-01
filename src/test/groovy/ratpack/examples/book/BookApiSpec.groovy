@@ -4,10 +4,10 @@ import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import groovy.sql.Sql
 import ratpack.groovy.test.LocalScriptApplicationUnderTest
-import ratpack.groovy.test.TestHttpClient
-import ratpack.groovy.test.TestHttpClients
 import ratpack.http.client.RequestSpec
 import ratpack.test.ApplicationUnderTest
+import ratpack.test.http.TestHttpClient
+import ratpack.test.http.TestHttpClients
 import ratpack.test.remote.RemoteControl
 import spock.lang.Specification
 
