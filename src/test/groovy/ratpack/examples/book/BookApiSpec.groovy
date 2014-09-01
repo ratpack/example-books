@@ -28,7 +28,7 @@ class BookApiSpec extends Specification {
         given:
         def json = new JsonSlurper()
         expect:
-        json.parseText(get("api/books").body.text) == []
+        json.parseText(getText("api/book")) == []
     }
 
     def "create book"() {
@@ -55,7 +55,7 @@ class BookApiSpec extends Specification {
 
         and:
         resetRequest()
-        def books = json.parseText(get("api/books").body.text)
+        def books = json.parseText(get("api/book").body.text)
         with(books[0]) {
             get("isbn") == "1932394842"
             get("title") == "Groovy in Action"

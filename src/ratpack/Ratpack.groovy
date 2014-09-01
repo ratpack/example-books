@@ -23,7 +23,6 @@ import ratpack.session.store.SessionStorage
 
 import static ratpack.groovy.Groovy.groovyMarkupTemplate
 import static ratpack.groovy.Groovy.ratpack
-import static ratpack.jackson.Jackson.json
 import static ratpack.pac4j.internal.SessionConstants.USER_PROFILE
 
 final Logger log = LoggerFactory.getLogger(Ratpack.class);
@@ -139,14 +138,8 @@ ratpack {
             }
         }
 
-        prefix("api") {
-            get("books") {
-                bookService.all().toList().subscribe { List<Book> books ->
-                    render json(books)
-                }
-            }
-
-            handler("book/:isbn?", registry.get(BookRestEndpoint))
+        prefix("api/book") {
+            handler chain(registry.get(BookRestEndpoint))
         }
 
         prefix("admin") {

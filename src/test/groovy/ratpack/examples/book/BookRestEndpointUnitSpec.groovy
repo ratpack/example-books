@@ -3,8 +3,6 @@ package ratpack.examples.book
 import ratpack.example.books.Book
 import ratpack.example.books.BookRestEndpoint
 import ratpack.example.books.BookService
-import ratpack.path.PathBinding
-import ratpack.path.PathTokens
 import ratpack.rx.RxRatpack
 import spock.lang.Specification
 
@@ -25,19 +23,11 @@ class BookRestEndpointUnitSpec extends Specification {
         def bookServices = Mock(BookService)
         bookServices.find("1932394842") >> findObservable
 
-        def pathTokens = Mock(PathTokens)
-        pathTokens.get("isbn") >> "1932394842"
-
-        def pathBinding = Mock(PathBinding)
-        pathBinding.getTokens() >> pathTokens
-
         when:
         def result = handle(new BookRestEndpoint(bookServices)) {
+            uri "1932394842"
             method "get"
             header "Accept", "application/json"
-            registry {
-                add pathBinding
-            }
         }
 
         then:
@@ -53,19 +43,11 @@ class BookRestEndpointUnitSpec extends Specification {
         def bookServices = Mock(BookService)
         bookServices.find("1932394842") >> findObservable
 
-        def pathTokens = Mock(PathTokens)
-        pathTokens.get("isbn") >> "1932394842"
-
-        def pathBinding = Mock(PathBinding)
-        pathBinding.getTokens() >> pathTokens
-
         when:
         def result = handle(new BookRestEndpoint(bookServices)) {
+            uri "1932394842"
             method "get"
             header "Accept", "application/json"
-            registry {
-                add pathBinding
-            }
         }
 
         then:
@@ -81,19 +63,11 @@ class BookRestEndpointUnitSpec extends Specification {
         def bookServices = Mock(BookService)
         1 * bookServices.delete("1932394842") >> deleteObservable
 
-       def pathTokens = Mock(PathTokens)
-        pathTokens.get("isbn") >> "1932394842"
-
-        def pathBinding = Mock(PathBinding)
-        pathBinding.getTokens() >> pathTokens
-
         when:
         def result = handle(new BookRestEndpoint(bookServices)) {
+            uri "1932394842"
             method "delete"
             header "Accept", "application/json"
-            registry {
-                add pathBinding
-            }
         }
 
         then:
