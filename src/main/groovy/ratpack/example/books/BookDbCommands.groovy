@@ -2,6 +2,7 @@ package ratpack.example.books
 
 import com.google.inject.Inject
 import com.netflix.hystrix.HystrixCommandGroupKey
+import com.netflix.hystrix.HystrixCommandKey
 import com.netflix.hystrix.HystrixObservableCommand
 import groovy.sql.GroovyRowResult
 import groovy.sql.Sql
@@ -28,7 +29,9 @@ class BookDbCommands {
     }
 
     rx.Observable<GroovyRowResult> getAll() {
-        return new HystrixObservableCommand<GroovyRowResult>(hystrixCommandGroupKey) {
+        return new HystrixObservableCommand<GroovyRowResult>(
+            HystrixObservableCommand.Setter.withGroupKey(hystrixCommandGroupKey).andCommandKey(HystrixCommandKey.Factory.asKey("getAll"))) {
+
             @Override
             protected rx.Observable<GroovyRowResult> run() {
                 observeEach(execControl.blocking {
@@ -44,7 +47,9 @@ class BookDbCommands {
     }
 
     rx.Observable<String> insert(final String isbn, final long quantity, final BigDecimal price) {
-        return new HystrixObservableCommand<String>(hystrixCommandGroupKey) {
+        return new HystrixObservableCommand<String>(
+            HystrixObservableCommand.Setter.withGroupKey(hystrixCommandGroupKey).andCommandKey(HystrixCommandKey.Factory.asKey("insert"))) {
+
             @Override
             protected rx.Observable<String> run() {
                 observe(execControl.blocking {
@@ -55,7 +60,9 @@ class BookDbCommands {
     }
 
     rx.Observable<GroovyRowResult> find(final String isbn) {
-        return new HystrixObservableCommand<GroovyRowResult>(hystrixCommandGroupKey) {
+        return new HystrixObservableCommand<GroovyRowResult>(
+            HystrixObservableCommand.Setter.withGroupKey(hystrixCommandGroupKey).andCommandKey(HystrixCommandKey.Factory.asKey("find"))) {
+
             @Override
             protected rx.Observable<GroovyRowResult> run() {
                 observe(execControl.blocking {
@@ -71,7 +78,9 @@ class BookDbCommands {
     }
 
     rx.Observable<Void> update(final String isbn, final long quantity, final BigDecimal price) {
-        return new HystrixObservableCommand<Void>(hystrixCommandGroupKey) {
+        return new HystrixObservableCommand<Void>(
+            HystrixObservableCommand.Setter.withGroupKey(hystrixCommandGroupKey).andCommandKey(HystrixCommandKey.Factory.asKey("update"))) {
+
             @Override
             protected rx.Observable<Void> run() {
                 observe(execControl.blocking {
@@ -82,7 +91,9 @@ class BookDbCommands {
     }
 
     rx.Observable<Void> delete(final String isbn) {
-        return new HystrixObservableCommand<Void>(hystrixCommandGroupKey) {
+        return new HystrixObservableCommand<Void>(
+            HystrixObservableCommand.Setter.withGroupKey(hystrixCommandGroupKey).andCommandKey(HystrixCommandKey.Factory.asKey("delete"))) {
+
             @Override
             protected rx.Observable<Void> run() {
                 observe(execControl.blocking {

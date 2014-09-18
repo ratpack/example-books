@@ -2,9 +2,8 @@ package ratpack.example.books
 
 import com.google.inject.Inject
 import com.netflix.hystrix.HystrixCommandGroupKey
+import com.netflix.hystrix.HystrixCommandKey
 import com.netflix.hystrix.HystrixObservableCommand
-import ratpack.func.Action
-import ratpack.http.HttpUrlSpec
 import ratpack.http.client.HttpClients
 import ratpack.http.client.ReceivedResponse
 import ratpack.http.client.RequestSpec
@@ -22,7 +21,10 @@ class IsbnDbCommands {
     }
 
     public rx.Observable<ReceivedResponse> getBookRequest(final String isbn) {
-        return new HystrixObservableCommand<ReceivedResponse>(HystrixCommandGroupKey.Factory.asKey("http-isbndb")) {
+        return new HystrixObservableCommand<ReceivedResponse>(
+            HystrixObservableCommand.Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey("http-isbndb"))
+                .andCommandKey(HystrixCommandKey.Factory.asKey("getBookRequest"))) {
+
             @Override
             protected rx.Observable<ReceivedResponse> run() {
                 return observe(HttpClients.httpClient(launchConfig).get({ RequestSpec request ->

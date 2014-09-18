@@ -12,7 +12,8 @@ import ratpack.form.Form
 import ratpack.groovy.markuptemplates.MarkupTemplatingModule
 import ratpack.groovy.sql.SqlModule
 import ratpack.hikari.HikariModule
-import ratpack.hystrix.HystrixRatpack
+import ratpack.hystrix.HystrixMetricsEventStreamHandler
+import ratpack.hystrix.HystrixModule
 import ratpack.jackson.JacksonModule
 import ratpack.pac4j.Pac4jModule
 import ratpack.remote.RemoteControlModule
@@ -40,11 +41,11 @@ ratpack {
         add new MapSessionsModule(10, 5)
         add new Pac4jModule<>(new FormClient("/login", new SimpleTestUsernamePasswordAuthenticator()), new AuthPathAuthorizer())
         add new MarkupTemplatingModule()
+        add new HystrixModule().sse()
 
         init { BookService bookService ->
             log.info("Initializing")
             RxRatpack.initialize()
-            HystrixRatpack.initialize()
             bookService.createTable()
         }
 
@@ -150,6 +151,7 @@ ratpack {
                 render groovyMarkupTemplate("metrics.gtpl", title: "Metrics")
             }
         }
+        get("hystrix.stream", new HystrixMetricsEventStreamHandler())
 
         handler("login") {
             render groovyMarkupTemplate("login.gtpl",
