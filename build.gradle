@@ -40,10 +40,10 @@ dependencies {
   testCompile "org.spockframework:spock-core:0.7-groovy-2.0", {
       exclude module: "groovy-all"
   }
-  testCompile "org.gebish:geb-spock:0.9.2"
+  testCompile "org.gebish:geb-spock:0.9.3"
   // Required for mocking multi arg constructor e.g. BookService
   testRuntime "org.objenesis:objenesis:1.2"
-  testCompile "org.seleniumhq.selenium:selenium-firefox-driver:2.40.0"
+  testCompile "org.seleniumhq.selenium:selenium-firefox-driver:2.43.1"
   testCompile ratpack.dependency("remote-test")
 }
 
