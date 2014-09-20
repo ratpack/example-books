@@ -2,10 +2,10 @@ package ratpack.examples.book
 
 import geb.spock.GebReportingSpec
 import groovy.sql.Sql
+import ratpack.examples.book.fixture.ExampleBooksApplicationUnderTest
 import ratpack.examples.book.pages.BooksPage
 import ratpack.examples.book.pages.CreateBookPage
 import ratpack.examples.book.pages.UpdateBookPage
-import ratpack.groovy.test.LocalScriptApplicationUnderTest
 import ratpack.test.ApplicationUnderTest
 import ratpack.test.remote.RemoteControl
 import spock.lang.Shared
@@ -15,7 +15,7 @@ import spock.lang.Stepwise
 class BookFunctionalSpec extends GebReportingSpec {
 
     @Shared
-    ApplicationUnderTest aut = new LocalScriptApplicationUnderTest('other.remoteControl.enabled': 'true')
+    ApplicationUnderTest aut = new ExampleBooksApplicationUnderTest()
 
     def setup() {
         browser.baseUrl = aut.address.toString()

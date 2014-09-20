@@ -1,9 +1,10 @@
 package ratpack.examples.book
 
+import com.codahale.metrics.SharedMetricRegistries
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import groovy.sql.Sql
-import ratpack.groovy.test.LocalScriptApplicationUnderTest
+import ratpack.examples.book.fixture.ExampleBooksApplicationUnderTest
 import ratpack.http.client.RequestSpec
 import ratpack.test.ApplicationUnderTest
 import ratpack.test.http.TestHttpClient
@@ -13,7 +14,8 @@ import spock.lang.Specification
 
 class BookApiSpec extends Specification {
 
-    ApplicationUnderTest aut = new LocalScriptApplicationUnderTest('other.remoteControl.enabled': 'true')
+    ApplicationUnderTest aut = new ExampleBooksApplicationUnderTest()
+
     @Delegate
     TestHttpClient client = TestHttpClients.testHttpClient(aut)
     RemoteControl remote = new RemoteControl(aut)
@@ -21,6 +23,7 @@ class BookApiSpec extends Specification {
     def cleanup() {
         remote.exec {
             get(Sql).execute("delete from books")
+            SharedMetricRegistries.clear()
         }
     }
 
