@@ -50,3 +50,17 @@ dependencies {
 // The Groovy that rest-assured drags in via ratpack-groovy-test is toxic, prevent it from coming in
 // This should be fixed upstream in Ratpack
 configurations.testCompile.dependencies.find { it.name == "ratpack-groovy-test" }.exclude(group: "org.codehaus.groovy")
+
+idea {
+    project {
+        jdkName "1.7"
+        languageLevel "1.7"
+        ipr {
+            withXml { provider ->
+                def node = provider.asNode()
+                //configure git support for the project in idea
+                node.component.find { it.'@name' == 'VcsDirectoryMappings' }?.mapping[0].'@vcs' = 'Git'
+            }
+        }
+    }
+}
