@@ -19,6 +19,10 @@ repositories {
   maven { url "https://nexus.codehaus.org/content/repositories/snapshots/" }
 }
 
+tasks.withType(Test) {
+    jvmArgs "-noverify"
+}
+
 dependencies {
   springloaded "org.springsource.loaded:springloaded:1.1.5.RELEASE"
 

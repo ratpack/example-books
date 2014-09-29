@@ -10,6 +10,7 @@ html(lang:'en') {
         link(href: '/css/bootstrap.min.css', rel: 'stylesheet')
         link(href: '/css/bootstrap-theme.min.css', rel: 'stylesheet')
         link(href: '/css/example-books.css', rel: 'stylesheet')
+        link(href: '/img/favicon.ico', rel: 'shortcut icon')
     }
     body {
         div(class:'container') {

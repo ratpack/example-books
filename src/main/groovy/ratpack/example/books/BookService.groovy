@@ -27,8 +27,8 @@ class BookService {
 
     Observable<Book> all() {
         bookDbCommands.getAll().flatMap {
-            isbnDbCommands.getBookRequest(it.isbn).map { ReceivedResponse resp ->
-                def result = new JsonSlurper().parseText(resp.body.text)
+            isbnDbCommands.getBookRequest(it.isbn).map { String jsonResp ->
+                def result = new JsonSlurper().parseText(jsonResp)
                 return new Book(
                         it.isbn,
                         it.quantity,
@@ -51,8 +51,8 @@ class BookService {
         Observable.zip(
                 bookDbCommands.find(isbn),
                 isbnDbCommands.getBookRequest(isbn)
-        ) { GroovyRowResult dbRow, ReceivedResponse resp ->
-            def result = new JsonSlurper().parseText(resp.body.text)
+        ) { GroovyRowResult dbRow, String jsonResp ->
+            def result = new JsonSlurper().parseText(jsonResp)
             return new Book(
                     isbn,
                     dbRow.quantity,

@@ -4,12 +4,13 @@ import com.google.inject.Inject
 import com.netflix.hystrix.HystrixCommandGroupKey
 import com.netflix.hystrix.HystrixCommandKey
 import com.netflix.hystrix.HystrixObservableCommand
-import ratpack.http.client.HttpClients
 import ratpack.http.client.ReceivedResponse
 import ratpack.http.client.RequestSpec
 import ratpack.launch.LaunchConfig
+import rx.Observable
 
 import static ratpack.rx.RxRatpack.observe
+import static ratpack.http.client.HttpClients.httpClient
 
 class IsbnDbCommands {
 
@@ -20,16 +21,23 @@ class IsbnDbCommands {
         this.launchConfig = launchConfig
     }
 
-    public rx.Observable<ReceivedResponse> getBookRequest(final String isbn) {
-        return new HystrixObservableCommand<ReceivedResponse>(
+    public Observable<String> getBookRequest(final String isbn) {
+        new HystrixObservableCommand<String>(
             HystrixObservableCommand.Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey("http-isbndb"))
                 .andCommandKey(HystrixCommandKey.Factory.asKey("getBookRequest"))) {
 
             @Override
-            protected rx.Observable<ReceivedResponse> run() {
-                return observe(HttpClients.httpClient(launchConfig).get({ RequestSpec request ->
+            protected Observable<String> run() {
+                observe(httpClient(launchConfig).get({ RequestSpec request ->
                     request.url.set("http://isbndb.com/api/v2/json/${launchConfig.getOther('isbndb.apikey', '')}/book/$isbn".toURI())
-                }))
+                })).map { ReceivedResponse resp ->
+                    resp.body.text
+                }
+            }
+
+            @Override
+            protected Observable<String> getFallback() {
+                return Observable.just('{"data" : [{"title" : "Groovy in Action", "publisher_name" : "Manning Publications", "author_data" : [{"id" : "dierk_koenig", "name" : "Dierk Koenig"}]}]}')
             }
 
             @Override
