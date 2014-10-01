@@ -4,10 +4,7 @@ buildscript {
     jcenter()
   }
   dependencies {
-    classpath 'io.ratpack:ratpack-gradle:+'
-  }
-  configurations.all {
-    resolutionStrategy.cacheDynamicVersionsFor 0, 'seconds'
+    classpath 'io.ratpack:ratpack-gradle:0.9.9'
   }
 }
 
