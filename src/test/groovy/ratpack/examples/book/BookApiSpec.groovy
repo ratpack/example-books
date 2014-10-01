@@ -1,6 +1,5 @@
 package ratpack.examples.book
 
-import com.codahale.metrics.SharedMetricRegistries
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import groovy.sql.Sql
@@ -23,7 +22,6 @@ class BookApiSpec extends Specification {
     def cleanup() {
         remote.exec {
             get(Sql).execute("delete from books")
-            SharedMetricRegistries.clear()
         }
     }
 
