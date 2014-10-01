@@ -4,7 +4,10 @@ buildscript {
     jcenter()
   }
   dependencies {
-    classpath 'io.ratpack:ratpack-gradle:0.9.9'
+    classpath 'io.ratpack:ratpack-gradle:+'
+  }
+  configurations.all {
+    resolutionStrategy.cacheDynamicVersionsFor 0, 'seconds'
   }
 }
 
@@ -53,8 +56,8 @@ configurations.testCompile.dependencies.find { it.name == "ratpack-groovy-test" 
 
 idea {
     project {
-        jdkName "1.7"
-        languageLevel "1.7"
+        jdkName "1.8"
+        languageLevel "1.8"
         ipr {
             withXml { provider ->
                 def node = provider.asNode()
