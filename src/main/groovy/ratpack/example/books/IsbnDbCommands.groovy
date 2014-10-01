@@ -31,6 +31,9 @@ class IsbnDbCommands {
                 observe(httpClient(launchConfig).get({ RequestSpec request ->
                     request.url.set("http://isbndb.com/api/v2/json/${launchConfig.getOther('isbndb.apikey', '')}/book/$isbn".toURI())
                 })).map { ReceivedResponse resp ->
+                    if (resp.body.text.contains("Daily request limit exceeded")) {
+                        throw new RuntimeException("ISBNDB daily request limit exceeded.")
+                    }
                     resp.body.text
                 }
             }
