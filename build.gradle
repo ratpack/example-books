@@ -1,21 +1,12 @@
-buildscript {
-  repositories {
-    maven { url "http://oss.jfrog.org/artifactory/repo" }
-    jcenter()
-  }
-  dependencies {
-    classpath 'io.ratpack:ratpack-gradle:0.9.9'
-  }
+plugins {
+	id "io.ratpack.ratpack-groovy" version "0.9.10"
+	id "org.gradle.idea"
+	id "org.gradle.eclipse"
 }
 
-apply plugin: "io.ratpack.ratpack-groovy"
-apply plugin: "idea"
-apply plugin: "eclipse"
-
 repositories {
-  maven { url "http://oss.jfrog.org/artifactory/repo" }
   jcenter()
-  maven { url "http://repo.springsource.org/repo" }
+  maven { url "https://oss.jfrog.org/repo" }
   maven { url "https://nexus.codehaus.org/content/repositories/snapshots/" }
 }
 
