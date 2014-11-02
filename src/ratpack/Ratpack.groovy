@@ -1,3 +1,4 @@
+import com.zaxxer.hikari.HikariConfig
 import org.pac4j.core.profile.UserProfile
 import org.pac4j.http.client.FormClient
 import org.pac4j.http.credentials.SimpleTestUsernamePasswordAuthenticator
@@ -32,7 +33,10 @@ ratpack {
     bindings {
         bind DatabaseHealthCheck
         add new CodaHaleMetricsModule().jvmMetrics().jmx().websocket().healthChecks()
-        add new HikariModule([URL: "jdbc:h2:mem:dev;INIT=CREATE SCHEMA IF NOT EXISTS DEV"], "org.h2.jdbcx.JdbcDataSource")
+        add(HikariModule) { HikariConfig c ->
+            c.addDataSourceProperty("URL", "jdbc:h2:mem:dev;INIT=CREATE SCHEMA IF NOT EXISTS DEV")
+            c.setDataSourceClassName("org.h2.jdbcx.JdbcDataSource")
+        }
         add new SqlModule()
         add new JacksonModule()
         add new BookModule()
@@ -55,7 +59,7 @@ ratpack {
     handlers { BookService bookService ->
 
         get {
-           bookService.all().toList().subscribe { List<Book> books ->
+            bookService.all().toList().subscribe { List<Book> books ->
                 SessionStorage sessionStorage = request.get(SessionStorage)
                 UserProfile profile = sessionStorage.get(USER_PROFILE)
                 def username = profile?.getAttribute("username")
@@ -67,7 +71,7 @@ ratpack {
                         title: "Books",
                         books: books,
                         msg: request.queryParams.msg ?: "")
-           }
+            }
         }
 
         handler("create") {
