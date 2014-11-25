@@ -11,7 +11,7 @@ repositories {
 }
 
 dependencies {
-  springloaded "org.springsource.loaded:springloaded:1.1.5.RELEASE"
+  springloaded "org.springframework:springloaded:1.2.1.RELEASE"
 
   compile ratpack.dependency("h2")
   compile ratpack.dependency("hikari")
