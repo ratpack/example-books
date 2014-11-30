@@ -5,7 +5,6 @@ import com.netflix.hystrix.HystrixCommandGroupKey
 import com.netflix.hystrix.HystrixCommandKey
 import com.netflix.hystrix.HystrixObservableCommand
 import ratpack.http.client.ReceivedResponse
-import ratpack.http.client.RequestSpec
 import ratpack.launch.LaunchConfig
 import rx.Observable
 
@@ -28,9 +27,8 @@ class IsbnDbCommands {
 
             @Override
             protected Observable<String> run() {
-                observe(httpClient(launchConfig).get({ RequestSpec request ->
-                    request.url.set("http://isbndb.com/api/v2/json/${launchConfig.getOther('isbndb.apikey', '')}/book/$isbn".toURI())
-                })).map { ReceivedResponse resp ->
+                def uri = "http://isbndb.com/api/v2/json/${launchConfig.getOther('isbndb.apikey', '')}/book/$isbn".toURI()
+                observe(httpClient(launchConfig).get(uri)).map { ReceivedResponse resp ->
                     if (resp.body.text.contains("Daily request limit exceeded")) {
                         throw new RuntimeException("ISBNDB daily request limit exceeded.")
                     }
