@@ -46,7 +46,7 @@ class BookFunctionalSpec extends GebReportingSpec {
 
     def "create book"() {
         when:
-        isbnField = "1932394842"
+        isbnField = "0345538986"
         quantityField = "10"
         priceField = "10.23"
         createButton.click()
@@ -56,10 +56,10 @@ class BookFunctionalSpec extends GebReportingSpec {
 
         and:
         books.size() == 1
-        books[0].isbn == "1932394842"
-        books[0].title == "Groovy in Action"
-        books[0].author == "Dierk Koenig"
-        books[0].publisher == "Manning Publications"
+        books[0].isbn == "0345538986"
+        books[0].title == "Jurassic Park: A Novel"
+        books[0].author == "Crichton, Michael"
+        books[0].publisher == "Ballantine Books"
         books[0].price == "10.23"
         books[0].quantity == "10"
     }
@@ -81,10 +81,10 @@ class BookFunctionalSpec extends GebReportingSpec {
 
         and:
         books.size() == 1
-        books[0].isbn == "1932394842"
-        books[0].title == "Groovy in Action"
-        books[0].author == "Dierk Koenig"
-        books[0].publisher == "Manning Publications"
+        books[0].isbn == "0345538986"
+        books[0].title == "Jurassic Park: A Novel"
+        books[0].author == "Crichton, Michael"
+        books[0].publisher == "Ballantine Books"
         books[0].price == "5.34"
         books[0].quantity == "2"
     }
