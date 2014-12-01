@@ -1,19 +1,8 @@
-buildscript {
-    repositories {
-        maven { url "http://oss.jfrog.org/artifactory/repo" }
-        jcenter()
-    }
-    dependencies {
-        classpath 'io.ratpack:ratpack-gradle:+'
-    }
-    configurations.all {
-        resolutionStrategy.cacheDynamicVersionsFor 0, 'seconds'
-    }
+plugins {
+	id "io.ratpack.ratpack-groovy" version "0.9.10"
+	id "org.gradle.idea"
+	id "org.gradle.eclipse"
 }
-
-apply plugin: "io.ratpack.ratpack-groovy"
-apply plugin: "idea"
-apply plugin: "eclipse"
 
 repositories {
   jcenter()
