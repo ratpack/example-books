@@ -10,8 +10,8 @@ import ratpack.codahale.metrics.MetricsWebsocketBroadcastHandler
 import ratpack.error.ServerErrorHandler
 import ratpack.example.books.*
 import ratpack.form.Form
-import ratpack.groovy.markuptemplates.MarkupTemplatingModule
 import ratpack.groovy.sql.SqlModule
+import ratpack.groovy.template.MarkupTemplateModule
 import ratpack.hikari.HikariModule
 import ratpack.hystrix.HystrixMetricsEventStreamHandler
 import ratpack.hystrix.HystrixModule
@@ -44,7 +44,7 @@ ratpack {
         add new SessionModule()
         add new MapSessionsModule(10, 5)
         add new Pac4jModule<>(new FormClient("/login", new SimpleTestUsernamePasswordAuthenticator()), new AuthPathAuthorizer())
-        add new MarkupTemplatingModule()
+        add new MarkupTemplateModule()
         add new HystrixModule().sse()
 
         init { BookService bookService ->
