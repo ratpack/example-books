@@ -5,6 +5,7 @@ buildscript {
     }
     dependencies {
         classpath 'io.ratpack:ratpack-gradle:+'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.0'
     }
     configurations.all {
         resolutionStrategy.cacheDynamicVersionsFor 0, 'seconds'
@@ -12,6 +13,7 @@ buildscript {
 }
 
 apply plugin: "io.ratpack.ratpack-groovy"
+apply plugin: "com.github.johnrengelman.shadow"
 apply plugin: "idea"
 apply plugin: "eclipse"
 
