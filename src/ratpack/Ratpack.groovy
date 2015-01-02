@@ -57,7 +57,7 @@ ratpack {
     handlers { BookService bookService ->
         get {
             bookService.all().toList().subscribe { List<Book> books ->
-                def isbndbApikey = launchConfig.getOther('isbndb.apikey', null)
+                def isbndbApikey = serverConfig.getOther('isbndb.apikey', null)
 
                 render groovyMarkupTemplate("listing.gtpl",
                         isbndbApikey: isbndbApikey,
