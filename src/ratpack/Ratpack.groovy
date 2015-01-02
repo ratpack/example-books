@@ -1,5 +1,4 @@
 import com.zaxxer.hikari.HikariConfig
-import org.pac4j.core.profile.UserProfile
 import org.pac4j.http.client.FormClient
 import org.pac4j.http.credentials.SimpleTestUsernamePasswordAuthenticator
 import org.slf4j.Logger
@@ -21,11 +20,9 @@ import ratpack.remote.RemoteControlModule
 import ratpack.rx.RxRatpack
 import ratpack.session.SessionModule
 import ratpack.session.store.MapSessionsModule
-import ratpack.session.store.SessionStorage
 
 import static ratpack.groovy.Groovy.groovyMarkupTemplate
 import static ratpack.groovy.Groovy.ratpack
-import static ratpack.pac4j.internal.SessionConstants.USER_PROFILE
 
 final Logger log = LoggerFactory.getLogger(Ratpack.class);
 
@@ -46,6 +43,7 @@ ratpack {
         add new Pac4jModule<>(new FormClient("/login", new SimpleTestUsernamePasswordAuthenticator()), new AuthPathAuthorizer())
         add new MarkupTemplateModule()
         add new HystrixModule().sse()
+        bind MarkupTemplateRenderableDecorator
 
         init { BookService bookService ->
             log.info("Initializing")
@@ -57,16 +55,11 @@ ratpack {
     }
 
     handlers { BookService bookService ->
-
         get {
             bookService.all().toList().subscribe { List<Book> books ->
-                SessionStorage sessionStorage = request.get(SessionStorage)
-                UserProfile profile = sessionStorage.get(USER_PROFILE)
-                def username = profile?.getAttribute("username")
                 def isbndbApikey = launchConfig.getOther('isbndb.apikey', null)
 
                 render groovyMarkupTemplate("listing.gtpl",
-                        username: username ?: "",
                         isbndbApikey: isbndbApikey,
                         title: "Books",
                         books: books,
