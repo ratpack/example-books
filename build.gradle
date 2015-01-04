@@ -35,7 +35,7 @@ dependencies {
   compile ratpack.dependency("rx")
   compile ratpack.dependency("hystrix")
   compile ratpack.dependency("pac4j")
-  compile "org.pac4j:pac4j-http:1.5.1"
+  compile "org.pac4j:pac4j-http:1.6.0"
 
   runtime 'org.apache.logging.log4j:log4j-slf4j-impl:2.0.1'
   runtime 'org.apache.logging.log4j:log4j-api:2.0.1'
