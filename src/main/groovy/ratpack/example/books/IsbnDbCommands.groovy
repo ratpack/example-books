@@ -6,7 +6,7 @@ import com.netflix.hystrix.HystrixCommandKey
 import com.netflix.hystrix.HystrixObservableCommand
 import ratpack.http.client.HttpClient
 import ratpack.http.client.ReceivedResponse
-import ratpack.launch.ServerConfig
+import ratpack.server.ServerConfig
 import rx.Observable
 
 import static ratpack.rx.RxRatpack.observe
