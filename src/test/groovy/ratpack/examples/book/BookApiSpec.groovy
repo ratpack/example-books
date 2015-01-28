@@ -7,7 +7,6 @@ import ratpack.examples.book.fixture.ExampleBooksApplicationUnderTest
 import ratpack.http.client.RequestSpec
 import ratpack.test.ApplicationUnderTest
 import ratpack.test.http.TestHttpClient
-import ratpack.test.http.TestHttpClients
 import ratpack.test.remote.RemoteControl
 import spock.lang.Specification
 
@@ -16,7 +15,7 @@ class BookApiSpec extends Specification {
     ApplicationUnderTest aut = new ExampleBooksApplicationUnderTest()
 
     @Delegate
-    TestHttpClient client = TestHttpClients.testHttpClient(aut)
+    TestHttpClient client = aut.httpClient
     RemoteControl remote = new RemoteControl(aut)
 
     def cleanup() {

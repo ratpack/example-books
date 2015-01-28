@@ -20,11 +20,31 @@ import ratpack.remote.RemoteControlModule
 import ratpack.rx.RxRatpack
 import ratpack.session.SessionModule
 import ratpack.session.store.MapSessionsModule
+import ratpack.server.ServerLifecycleListener
+import ratpack.server.StartEvent
 
 import static ratpack.groovy.Groovy.groovyMarkupTemplate
 import static ratpack.groovy.Groovy.ratpack
 
+import javax.inject.Inject
+
 final Logger log = LoggerFactory.getLogger(Ratpack.class);
+
+
+class DbInit implements ServerLifecycleListener {
+
+  final BookService bookService
+
+  @Inject
+  DbInit(BookService bookService) {
+    this.bookService = bookService
+  }
+
+  void onStart(StartEvent event) throws Exception {
+    log.info "Initializing DB"
+    bookService.createTable()
+  }
+}
 
 ratpack {
     bindings {
@@ -45,10 +65,14 @@ ratpack {
         add new HystrixModule().sse()
         bind MarkupTemplateRenderableDecorator
 
-        init { BookService bookService ->
-            log.info("Initializing")
+        bind DbInit
+        bindInstance ServerLifecycleListener, new ServerLifecycleListener()  {
+
+          void onStart(StartEvent event) throws Exception {
+            log.info "Initializing RX"
             RxRatpack.initialize()
-            bookService.createTable()
+            // bookService.createTable()
+          }
         }
 
         bind ServerErrorHandler, ErrorHandler
