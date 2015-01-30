@@ -1,14 +1,13 @@
 package ratpack.examples.book.fixture
 
-import ratpack.example.books.App
 import ratpack.registry.Registries
-import ratpack.test.MainClassApplicationUnderTest
+import ratpack.groovy.test.GroovyRatpackMainApplicationUnderTest
 
-class ExampleBooksApplicationUnderTest extends MainClassApplicationUnderTest {
+class ExampleBooksApplicationUnderTest extends GroovyRatpackMainApplicationUnderTest {
 
     ExampleBooksApplicationUnderTest() {
         // super(getOverriddenProperties())
-        super(App, Registries.empty())
+        super()
     }
 
     private static Map<String, String> getOverriddenProperties() {
