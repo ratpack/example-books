@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory
 import ratpack.codahale.metrics.CodaHaleMetricsModule
 import ratpack.codahale.metrics.HealthCheckHandler
 import ratpack.codahale.metrics.MetricsWebsocketBroadcastHandler
+import ratpack.config.ConfigurationData
+import ratpack.config.Configurations
 import ratpack.error.ServerErrorHandler
 import ratpack.example.books.*
 import ratpack.form.Form
@@ -26,28 +28,16 @@ import ratpack.server.StartEvent
 import static ratpack.groovy.Groovy.groovyMarkupTemplate
 import static ratpack.groovy.Groovy.ratpack
 
-import javax.inject.Inject
-
-final Logger log = LoggerFactory.getLogger(Ratpack.class);
-
-
-class DbInit implements ServerLifecycleListener {
-
-  final BookService bookService
-
-  @Inject
-  DbInit(BookService bookService) {
-    this.bookService = bookService
-  }
-
-  void onStart(StartEvent event) throws Exception {
-    log.info "Initializing DB"
-    bookService.createTable()
-  }
-}
+final Logger log = LoggerFactory.getLogger(ratpack.class);
 
 ratpack {
     bindings {
+        ConfigurationData configData = Configurations.config()
+                .props("$serverConfig.baseDir.file/application.properties")
+                .env()
+                .build()
+        bindInstance(IsbndbConfig.class, configData.get("/isbndb", IsbndbConfig.class))
+
         bind DatabaseHealthCheck
         add new CodaHaleMetricsModule().jvmMetrics().jmx().websocket().healthChecks()
         add(HikariModule) { HikariConfig c ->
@@ -57,7 +47,7 @@ ratpack {
         add new SqlModule()
         add new JacksonModule()
         add new BookModule()
-        add new RemoteControlModule()
+        add new RemoteControlModule(), { it.enabled(configData.get("/remote", RemoteControlConfig.class).enabled) }
         add new SessionModule()
         add new MapSessionsModule(10, 5)
         add new Pac4jModule<>(new FormClient("/login", new SimpleTestUsernamePasswordAuthenticator()), new AuthPathAuthorizer())
@@ -65,14 +55,12 @@ ratpack {
         add new HystrixModule().sse()
         bind MarkupTemplateRenderableDecorator
 
-        bind DbInit
         bindInstance ServerLifecycleListener, new ServerLifecycleListener()  {
-
-          void onStart(StartEvent event) throws Exception {
-            log.info "Initializing RX"
-            RxRatpack.initialize()
-            // bookService.createTable()
-          }
+            void onStart(StartEvent event) throws Exception {
+                log.info "Initializing RX"
+                RxRatpack.initialize()
+                event.registry.get(BookService).createTable()
+            }
         }
 
         bind ServerErrorHandler, ErrorHandler
@@ -81,7 +69,7 @@ ratpack {
     handlers { BookService bookService ->
         get {
             bookService.all().toList().subscribe { List<Book> books ->
-                def isbndbApikey = serverConfig.getOther('isbndb.apikey', null)
+                def isbndbApikey = context.get(IsbndbConfig).apikey
 
                 render groovyMarkupTemplate("listing.gtpl",
                         isbndbApikey: isbndbApikey,

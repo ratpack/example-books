@@ -8,10 +8,12 @@ import ratpack.http.client.RequestSpec
 import ratpack.test.ApplicationUnderTest
 import ratpack.test.http.TestHttpClient
 import ratpack.test.remote.RemoteControl
+import spock.lang.Shared
 import spock.lang.Specification
 
 class BookApiSpec extends Specification {
 
+    @Shared
     ApplicationUnderTest aut = new ExampleBooksApplicationUnderTest()
 
     @Delegate

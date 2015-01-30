@@ -9,6 +9,7 @@ public class BookModule extends AbstractModule {
     protected void configure() {
         bind(BookService.class).in(Scopes.SINGLETON);
         bind(BookRenderer.class).in(Scopes.SINGLETON);
+        bind(BookRestEndpoint.class).in(Scopes.SINGLETON);
         bind(BookDbCommands.class).in(Scopes.SINGLETON);
         bind(IsbnDbCommands.class).in(Scopes.SINGLETON);
     }
