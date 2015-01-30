@@ -4,8 +4,10 @@ import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import groovy.sql.Sql
 import ratpack.examples.book.fixture.ExampleBooksApplicationUnderTest
+import ratpack.groovy.test.embed.GroovyEmbeddedApp
 import ratpack.http.client.RequestSpec
 import ratpack.test.ApplicationUnderTest
+import ratpack.test.embed.EmbeddedApp
 import ratpack.test.http.TestHttpClient
 import ratpack.test.remote.RemoteControl
 import spock.lang.Shared
@@ -16,14 +18,33 @@ class BookApiSpec extends Specification {
     @Shared
     ApplicationUnderTest aut = new ExampleBooksApplicationUnderTest()
 
+    @Shared
+    EmbeddedApp isbndb = GroovyEmbeddedApp.build {
+        handlers {
+            handler {
+                render '{"data" : [{"title" : "Groovy in Action", "publisher_name" : "Manning Publications", "author_data" : [{"id" : "dierk_koenig", "name" : "Dierk Koenig"}]}]}'
+            }
+        }
+    }
+
     @Delegate
     TestHttpClient client = aut.httpClient
     RemoteControl remote = new RemoteControl(aut)
+
+    def setupSpec() {
+        System.setProperty('ratpack.isbndb.host', "http://${isbndb.address.host}:${isbndb.address.port}")
+        System.setProperty('ratpack.remote.enabled', 'true')
+    }
 
     def cleanup() {
         remote.exec {
             get(Sql).execute("delete from books")
         }
+    }
+
+    def cleanupSpec() {
+        System.clearProperty('ratpack.remote.enabled')
+        System.clearProperty('ratpack.isbndb.host')
     }
 
     def "list empty books"() {

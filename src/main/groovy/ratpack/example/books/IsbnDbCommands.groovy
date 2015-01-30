@@ -28,7 +28,7 @@ class IsbnDbCommands {
 
             @Override
             protected Observable<String> run() {
-                def uri = "http://isbndb.com/api/v2/json/${config.apikey}/book/$isbn".toURI()
+                def uri = "${config.host}/api/v2/json/${config.apikey}/book/$isbn".toURI()
                 observe(httpClient.get(uri)).map { ReceivedResponse resp ->
                     if (resp.body.text.contains("Daily request limit exceeded")) {
                         throw new RuntimeException("ISBNDB daily request limit exceeded.")

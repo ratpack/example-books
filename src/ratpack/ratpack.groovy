@@ -35,6 +35,7 @@ ratpack {
         ConfigurationData configData = Configurations.config()
                 .props("$serverConfig.baseDir.file/application.properties")
                 .env()
+                .sysProps()
                 .build()
         bindInstance(IsbndbConfig.class, configData.get("/isbndb", IsbndbConfig.class))
 
