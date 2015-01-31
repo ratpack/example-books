@@ -7,7 +7,6 @@ import ratpack.codahale.metrics.CodaHaleMetricsModule
 import ratpack.codahale.metrics.HealthCheckHandler
 import ratpack.codahale.metrics.MetricsWebsocketBroadcastHandler
 import ratpack.config.ConfigurationData
-import ratpack.config.Configurations
 import ratpack.error.ServerErrorHandler
 import ratpack.example.books.*
 import ratpack.form.Form
@@ -18,7 +17,6 @@ import ratpack.hystrix.HystrixMetricsEventStreamHandler
 import ratpack.hystrix.HystrixModule
 import ratpack.jackson.JacksonModule
 import ratpack.pac4j.Pac4jModule
-import ratpack.remote.RemoteControlModule
 import ratpack.rx.RxRatpack
 import ratpack.server.ReloadInformant
 import ratpack.server.ServerLifecycleListener
@@ -33,7 +31,7 @@ final Logger log = LoggerFactory.getLogger(ratpack.class);
 
 ratpack {
     bindings {
-        ConfigurationData configData = Configurations.config()
+        ConfigurationData configData = ConfigurationData.of()
                 .props("$serverConfig.baseDir.file/application.properties")
                 .env()
                 .sysProps()
@@ -50,7 +48,6 @@ ratpack {
         add new SqlModule()
         add new JacksonModule()
         add new BookModule()
-        add new RemoteControlModule(), configData.get("/remote", RemoteControlModule.Config), { }
         add new SessionModule()
         add new MapSessionsModule(10, 5)
         add new Pac4jModule<>(new FormClient("/login", new SimpleTestUsernamePasswordAuthenticator()), new AuthPathAuthorizer())
