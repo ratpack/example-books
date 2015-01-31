@@ -20,10 +20,11 @@ import ratpack.jackson.JacksonModule
 import ratpack.pac4j.Pac4jModule
 import ratpack.remote.RemoteControlModule
 import ratpack.rx.RxRatpack
-import ratpack.session.SessionModule
-import ratpack.session.store.MapSessionsModule
+import ratpack.server.ReloadInformant
 import ratpack.server.ServerLifecycleListener
 import ratpack.server.StartEvent
+import ratpack.session.SessionModule
+import ratpack.session.store.MapSessionsModule
 
 import static ratpack.groovy.Groovy.groovyMarkupTemplate
 import static ratpack.groovy.Groovy.ratpack
@@ -37,10 +38,11 @@ ratpack {
                 .env()
                 .sysProps()
                 .build()
-        bindInstance(IsbndbConfig.class, configData.get("/isbndb", IsbndbConfig.class))
+        bindInstance(IsbndbConfig, configData.get("/isbndb", IsbndbConfig))
+        bindInstance(ReloadInformant, configData.reloadInformant)
 
         bind DatabaseHealthCheck
-        add new CodaHaleMetricsModule().jvmMetrics().jmx().websocket().healthChecks()
+        add new CodaHaleMetricsModule(), { it.enable(true).jvmMetrics(true).jmx { it.enable(true) }.healthChecks(true) }
         add(HikariModule) { HikariConfig c ->
             c.addDataSourceProperty("URL", "jdbc:h2:mem:dev;INIT=CREATE SCHEMA IF NOT EXISTS DEV")
             c.setDataSourceClassName("org.h2.jdbcx.JdbcDataSource")
@@ -48,7 +50,7 @@ ratpack {
         add new SqlModule()
         add new JacksonModule()
         add new BookModule()
-        add new RemoteControlModule(), { it.enabled(configData.get("/remote", RemoteControlConfig.class).enabled) }
+        add new RemoteControlModule(), configData.get("/remote", RemoteControlModule.Config), { }
         add new SessionModule()
         add new MapSessionsModule(10, 5)
         add new Pac4jModule<>(new FormClient("/login", new SimpleTestUsernamePasswordAuthenticator()), new AuthPathAuthorizer())
