@@ -30,7 +30,6 @@ class BookFunctionalSpec extends GebReportingSpec {
 
     def setupSpec() {
         System.setProperty('ratpack.isbndb.host', "http://${isbndb.address.host}:${isbndb.address.port}")
-        System.setProperty('ratpack.remote.enabled', 'true')
     }
 
     def setup() {
@@ -43,7 +42,6 @@ class BookFunctionalSpec extends GebReportingSpec {
             get(Sql).execute("delete from books")
         }
         System.clearProperty('ratpack.isbndb.host')
-        System.clearProperty('ratpack.remote.enabled')
     }
 
     def "no books are listed"() {

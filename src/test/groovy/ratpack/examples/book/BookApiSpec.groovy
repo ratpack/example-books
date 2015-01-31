@@ -33,7 +33,6 @@ class BookApiSpec extends Specification {
 
     def setupSpec() {
         System.setProperty('ratpack.isbndb.host', "http://${isbndb.address.host}:${isbndb.address.port}")
-        System.setProperty('ratpack.remote.enabled', 'true')
     }
 
     def cleanup() {
@@ -43,7 +42,6 @@ class BookApiSpec extends Specification {
     }
 
     def cleanupSpec() {
-        System.clearProperty('ratpack.remote.enabled')
         System.clearProperty('ratpack.isbndb.host')
     }
 
