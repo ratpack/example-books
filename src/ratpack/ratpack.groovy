@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory
 import ratpack.codahale.metrics.CodaHaleMetricsModule
 import ratpack.codahale.metrics.HealthCheckHandler
 import ratpack.codahale.metrics.MetricsWebsocketBroadcastHandler
-import ratpack.config.ConfigurationData
+import ratpack.config.ConfigData
 import ratpack.error.ServerErrorHandler
 import ratpack.example.books.*
 import ratpack.form.Form
@@ -18,8 +18,7 @@ import ratpack.hystrix.HystrixModule
 import ratpack.jackson.JacksonModule
 import ratpack.pac4j.Pac4jModule
 import ratpack.rx.RxRatpack
-import ratpack.server.ReloadInformant
-import ratpack.server.ServerLifecycleListener
+import ratpack.server.Service
 import ratpack.server.StartEvent
 import ratpack.session.SessionModule
 import ratpack.session.store.MapSessionsModule
@@ -31,13 +30,12 @@ final Logger log = LoggerFactory.getLogger(ratpack.class);
 
 ratpack {
     bindings {
-        ConfigurationData configData = ConfigurationData.of()
+        ConfigData configData = ConfigData.of()
                 .props("$serverConfig.baseDir.file/application.properties")
                 .env()
                 .sysProps()
                 .build()
         bindInstance(IsbndbConfig, configData.get("/isbndb", IsbndbConfig))
-        bindInstance(ReloadInformant, configData.reloadInformant)
 
         bind DatabaseHealthCheck
         add new CodaHaleMetricsModule(), { it.enable(true).jvmMetrics(true).jmx { it.enable(true) }.healthChecks(true) }
@@ -55,7 +53,8 @@ ratpack {
         add new HystrixModule().sse()
         bind MarkupTemplateRenderableDecorator
 
-        bindInstance ServerLifecycleListener, new ServerLifecycleListener()  {
+        bindInstance Service, new Service() {
+            @Override
             void onStart(StartEvent event) throws Exception {
                 log.info "Initializing RX"
                 RxRatpack.initialize()
