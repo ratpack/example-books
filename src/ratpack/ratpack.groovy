@@ -18,6 +18,7 @@ import ratpack.hystrix.HystrixModule
 import ratpack.jackson.JacksonModule
 import ratpack.pac4j.Pac4jModule
 import ratpack.rx.RxRatpack
+import ratpack.server.ReloadInformant
 import ratpack.server.Service
 import ratpack.server.StartEvent
 import ratpack.session.SessionModule
@@ -35,6 +36,7 @@ ratpack {
                 .env()
                 .sysProps()
                 .build()
+        bindInstance(ReloadInformant, configData) // Add to the registry to enable development time config reloading
         bindInstance(IsbndbConfig, configData.get("/isbndb", IsbndbConfig))
 
         bind DatabaseHealthCheck
