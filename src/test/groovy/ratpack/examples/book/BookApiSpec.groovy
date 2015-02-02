@@ -33,6 +33,7 @@ class BookApiSpec extends Specification {
 
     def setupSpec() {
         System.setProperty('ratpack.isbndb.host', "http://${isbndb.address.host}:${isbndb.address.port}")
+        System.setProperty('ratpack.isbndb.apikey', "fakeapikey")
     }
 
     def cleanup() {
