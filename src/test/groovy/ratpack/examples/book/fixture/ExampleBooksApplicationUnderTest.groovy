@@ -1,19 +1,15 @@
 package ratpack.examples.book.fixture
 
-import ratpack.groovy.test.LocalScriptApplicationUnderTest
+import ratpack.registry.Registry
+import ratpack.registry.Registries
+import ratpack.remote.RemoteControl
+import ratpack.groovy.test.GroovyRatpackMainApplicationUnderTest
 
-class ExampleBooksApplicationUnderTest extends LocalScriptApplicationUnderTest {
+class ExampleBooksApplicationUnderTest extends GroovyRatpackMainApplicationUnderTest {
 
-    ExampleBooksApplicationUnderTest() {
-        super(getOverriddenProperties())
+  protected Registry createOverrides(Registry serverRegistry) throws Exception {
+    return Registries.registry {
+        it.add(RemoteControl.handlerDecorator())
     }
-
-    private static Map<String, String> getOverriddenProperties() {
-        def overriddenProperties = ['other.remoteControl.enabled': 'true']
-        def isbnDbApiKey = System.getenv("ISBNDB_API_KEY")
-        if (isbnDbApiKey) {
-            overriddenProperties['other.isbndb.apikey'] = isbnDbApiKey
-        }
-        overriddenProperties
-    }
+  }
 }

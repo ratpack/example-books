@@ -4,23 +4,27 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'io.ratpack:ratpack-gradle:0.9.11'
+        classpath 'io.ratpack:ratpack-gradle:0.9.13'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.1'
     }
 }
 
 apply plugin: "io.ratpack.ratpack-groovy"
+apply plugin: "com.github.johnrengelman.shadow"
 apply plugin: "idea"
 apply plugin: "eclipse"
 
 repositories {
   jcenter()
+  maven { url 'http://clinker.netty.io/nexus/content/repositories/snapshots' }
   maven { url "https://oss.jfrog.org/repo" }
   maven { url "https://nexus.codehaus.org/content/repositories/snapshots/" }
 }
 
 dependencies {
-  springloaded "org.springframework:springloaded:1.2.1.RELEASE"
+  // springloaded "org.springframework:springloaded:1.2.1.RELEASE"
 
+  compile ratpack.dependency("config")
   compile ratpack.dependency("h2")
   compile ratpack.dependency("hikari")
   compile ratpack.dependency("jackson")
@@ -29,7 +33,7 @@ dependencies {
   compile ratpack.dependency("rx")
   compile ratpack.dependency("hystrix")
   compile ratpack.dependency("pac4j")
-  compile "org.pac4j:pac4j-http:1.5.1"
+  compile "org.pac4j:pac4j-http:1.6.0"
 
   runtime 'org.apache.logging.log4j:log4j-slf4j-impl:2.0.1'
   runtime 'org.apache.logging.log4j:log4j-api:2.0.1'

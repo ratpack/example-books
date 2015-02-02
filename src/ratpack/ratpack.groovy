@@ -1,5 +1,4 @@
 import com.zaxxer.hikari.HikariConfig
-import org.pac4j.core.profile.UserProfile
 import org.pac4j.http.client.FormClient
 import org.pac4j.http.credentials.SimpleTestUsernamePasswordAuthenticator
 import org.slf4j.Logger
@@ -7,32 +6,39 @@ import org.slf4j.LoggerFactory
 import ratpack.codahale.metrics.CodaHaleMetricsModule
 import ratpack.codahale.metrics.HealthCheckHandler
 import ratpack.codahale.metrics.MetricsWebsocketBroadcastHandler
+import ratpack.config.ConfigData
 import ratpack.error.ServerErrorHandler
 import ratpack.example.books.*
 import ratpack.form.Form
-import ratpack.groovy.markuptemplates.MarkupTemplatingModule
 import ratpack.groovy.sql.SqlModule
+import ratpack.groovy.template.MarkupTemplateModule
 import ratpack.hikari.HikariModule
 import ratpack.hystrix.HystrixMetricsEventStreamHandler
 import ratpack.hystrix.HystrixModule
 import ratpack.jackson.JacksonModule
 import ratpack.pac4j.Pac4jModule
-import ratpack.remote.RemoteControlModule
 import ratpack.rx.RxRatpack
+import ratpack.server.Service
+import ratpack.server.StartEvent
 import ratpack.session.SessionModule
 import ratpack.session.store.MapSessionsModule
-import ratpack.session.store.SessionStorage
 
 import static ratpack.groovy.Groovy.groovyMarkupTemplate
 import static ratpack.groovy.Groovy.ratpack
-import static ratpack.pac4j.internal.SessionConstants.USER_PROFILE
 
-final Logger log = LoggerFactory.getLogger(Ratpack.class);
+final Logger log = LoggerFactory.getLogger(ratpack.class);
 
 ratpack {
     bindings {
+        ConfigData configData = ConfigData.of()
+                .props("$serverConfig.baseDir.file/application.properties")
+                .env()
+                .sysProps()
+                .build()
+        bindInstance(IsbndbConfig, configData.get("/isbndb", IsbndbConfig))
+
         bind DatabaseHealthCheck
-        add new CodaHaleMetricsModule().jvmMetrics().jmx().websocket().healthChecks()
+        add new CodaHaleMetricsModule(), { it.enable(true).jvmMetrics(true).jmx { it.enable(true) }.healthChecks(true) }
         add(HikariModule) { HikariConfig c ->
             c.addDataSourceProperty("URL", "jdbc:h2:mem:dev;INIT=CREATE SCHEMA IF NOT EXISTS DEV")
             c.setDataSourceClassName("org.h2.jdbcx.JdbcDataSource")
@@ -40,33 +46,31 @@ ratpack {
         add new SqlModule()
         add new JacksonModule()
         add new BookModule()
-        add new RemoteControlModule()
         add new SessionModule()
         add new MapSessionsModule(10, 5)
         add new Pac4jModule<>(new FormClient("/login", new SimpleTestUsernamePasswordAuthenticator()), new AuthPathAuthorizer())
-        add new MarkupTemplatingModule()
+        add new MarkupTemplateModule()
         add new HystrixModule().sse()
+        bind MarkupTemplateRenderableDecorator
 
-        init { BookService bookService ->
-            log.info("Initializing")
-            RxRatpack.initialize()
-            bookService.createTable()
+        bindInstance Service, new Service() {
+            @Override
+            void onStart(StartEvent event) throws Exception {
+                log.info "Initializing RX"
+                RxRatpack.initialize()
+                event.registry.get(BookService).createTable()
+            }
         }
 
         bind ServerErrorHandler, ErrorHandler
     }
 
     handlers { BookService bookService ->
-
         get {
             bookService.all().toList().subscribe { List<Book> books ->
-                SessionStorage sessionStorage = request.get(SessionStorage)
-                UserProfile profile = sessionStorage.get(USER_PROFILE)
-                def username = profile?.getAttribute("username")
-                def isbndbApikey = launchConfig.getOther('isbndb.apikey', null)
+                def isbndbApikey = context.get(IsbndbConfig).apikey
 
                 render groovyMarkupTemplate("listing.gtpl",
-                        username: username ?: "",
                         isbndbApikey: isbndbApikey,
                         title: "Books",
                         books: books,

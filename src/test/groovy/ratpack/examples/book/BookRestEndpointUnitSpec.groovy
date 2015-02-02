@@ -6,7 +6,7 @@ import ratpack.example.books.BookService
 import ratpack.rx.RxRatpack
 import spock.lang.Specification
 
-import static ratpack.groovy.test.GroovyUnitTest.handle
+import static ratpack.groovy.test.handling.GroovyRequestFixture.handle
 
 class BookRestEndpointUnitSpec extends Specification {
 

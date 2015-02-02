@@ -12,10 +12,10 @@ class BookRenderer extends GroovyRendererSupport<Book> {
     void render(GroovyContext context, Book book) throws Exception {
         context.byContent {
             json {
-                render Jackson.json(book)
+                context.render Jackson.json(book)
             }
             xml {
-                render markupBuilder("application/xml", "UTF-8") {
+                context.render markupBuilder("application/xml", "UTF-8") {
                     delegate.book(isbn: book.isbn) {
                         quantity book.quantity
                         price book.price

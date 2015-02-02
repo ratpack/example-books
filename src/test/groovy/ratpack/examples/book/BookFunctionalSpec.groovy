@@ -6,7 +6,9 @@ import ratpack.examples.book.fixture.ExampleBooksApplicationUnderTest
 import ratpack.examples.book.pages.BooksPage
 import ratpack.examples.book.pages.CreateBookPage
 import ratpack.examples.book.pages.UpdateBookPage
+import ratpack.groovy.test.embed.GroovyEmbeddedApp
 import ratpack.test.ApplicationUnderTest
+import ratpack.test.embed.EmbeddedApp
 import ratpack.test.remote.RemoteControl
 import spock.lang.Shared
 import spock.lang.Stepwise
@@ -17,6 +19,20 @@ class BookFunctionalSpec extends GebReportingSpec {
     @Shared
     ApplicationUnderTest aut = new ExampleBooksApplicationUnderTest()
 
+    @Shared
+    EmbeddedApp isbndb = GroovyEmbeddedApp.build {
+        handlers {
+            handler {
+                render '{"data" : [{"title" : "Jurassic Park: A Novel", "publisher_name" : "Ballantine Books", "author_data" : [{"id" : "cm", "name" : "Crichton, Michael"}]}]}'
+            }
+        }
+    }
+
+    def setupSpec() {
+        System.setProperty('ratpack.isbndb.host', "http://${isbndb.address.host}:${isbndb.address.port}")
+        System.setProperty('ratpack.isbndb.apikey', "fakeapikey")
+    }
+
     def setup() {
         browser.baseUrl = aut.address.toString()
     }
@@ -26,6 +42,7 @@ class BookFunctionalSpec extends GebReportingSpec {
         remote.exec {
             get(Sql).execute("delete from books")
         }
+        System.clearProperty('ratpack.isbndb.host')
     }
 
     def "no books are listed"() {

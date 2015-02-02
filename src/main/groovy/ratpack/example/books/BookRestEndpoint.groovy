@@ -43,7 +43,7 @@ class BookRestEndpoint implements Action<Chain> {
                         ) flatMap {
                             bookService.find(isbn).single()
                         } subscribe { Book book ->
-                            render json(book)
+                            render book
                         }
                     }
                     delete {
@@ -70,7 +70,7 @@ class BookRestEndpoint implements Action<Chain> {
                         ).single().flatMap {
                             bookService.find(it).single()
                         } subscribe { Book createdBook ->
-                            render json(createdBook)
+                            render createdBook
                         }
                     }
                 }

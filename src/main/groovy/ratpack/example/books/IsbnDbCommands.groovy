@@ -4,21 +4,21 @@ import com.google.inject.Inject
 import com.netflix.hystrix.HystrixCommandGroupKey
 import com.netflix.hystrix.HystrixCommandKey
 import com.netflix.hystrix.HystrixObservableCommand
+import ratpack.http.client.HttpClient
 import ratpack.http.client.ReceivedResponse
-import ratpack.http.client.RequestSpec
-import ratpack.launch.LaunchConfig
 import rx.Observable
 
 import static ratpack.rx.RxRatpack.observe
-import static ratpack.http.client.HttpClients.httpClient
 
 class IsbnDbCommands {
 
-    private final LaunchConfig launchConfig
+    private final IsbndbConfig config
+    private final HttpClient httpClient
 
     @Inject
-    public IsbnDbCommands(LaunchConfig launchConfig) {
-        this.launchConfig = launchConfig
+    public IsbnDbCommands(IsbndbConfig config, HttpClient httpClient) {
+        this.config = config
+        this.httpClient = httpClient
     }
 
     public Observable<String> getBookRequest(final String isbn) {
@@ -28,8 +28,8 @@ class IsbnDbCommands {
 
             @Override
             protected Observable<String> run() {
-                def uri = "http://isbndb.com/api/v2/json/${launchConfig.getOther('isbndb.apikey', '')}/book/$isbn".toURI()
-                observe(httpClient(launchConfig).get(uri)).map { ReceivedResponse resp ->
+                def uri = "${config.host}/api/v2/json/${config.apikey}/book/$isbn".toURI()
+                observe(httpClient.get(uri)).map { ReceivedResponse resp ->
                     if (resp.body.text.contains("Daily request limit exceeded")) {
                         throw new RuntimeException("ISBNDB daily request limit exceeded.")
                     }
