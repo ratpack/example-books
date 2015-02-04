@@ -42,7 +42,7 @@ ratpack {
 
         bind DatabaseHealthCheck
         add new CodaHaleHealthCheckModule()
-        add new CodaHaleMetricsModule(), { it.enable(true).jvmMetrics(true).jmx { it.enable(true) } }
+        add new CodaHaleMetricsModule(), { it.jvmMetrics(true).jmx() }
         add(HikariModule) { HikariConfig c ->
             c.addDataSourceProperty("URL", "jdbc:h2:mem:dev;INIT=CREATE SCHEMA IF NOT EXISTS DEV")
             c.setDataSourceClassName("org.h2.jdbcx.JdbcDataSource")
