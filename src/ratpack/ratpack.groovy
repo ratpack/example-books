@@ -3,8 +3,9 @@ import org.pac4j.http.client.FormClient
 import org.pac4j.http.credentials.SimpleTestUsernamePasswordAuthenticator
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import ratpack.codahale.healthcheck.CodaHaleHealthCheckModule
+import ratpack.codahale.healthcheck.HealthCheckHandler
 import ratpack.codahale.metrics.CodaHaleMetricsModule
-import ratpack.codahale.metrics.HealthCheckHandler
 import ratpack.codahale.metrics.MetricsWebsocketBroadcastHandler
 import ratpack.config.ConfigData
 import ratpack.error.ServerErrorHandler
@@ -40,7 +41,8 @@ ratpack {
         bindInstance(IsbndbConfig, configData.get("/isbndb", IsbndbConfig))
 
         bind DatabaseHealthCheck
-        add new CodaHaleMetricsModule(), { it.enable(true).jvmMetrics(true).jmx { it.enable(true) }.healthChecks(true) }
+        add new CodaHaleHealthCheckModule()
+        add new CodaHaleMetricsModule(), { it.enable(true).jvmMetrics(true).jmx { it.enable(true) } }
         add(HikariModule) { HikariConfig c ->
             c.addDataSourceProperty("URL", "jdbc:h2:mem:dev;INIT=CREATE SCHEMA IF NOT EXISTS DEV")
             c.setDataSourceClassName("org.h2.jdbcx.JdbcDataSource")
