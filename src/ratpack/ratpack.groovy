@@ -1,3 +1,4 @@
+import com.fasterxml.jackson.datatype.jsr310.JSR310Module
 import com.zaxxer.hikari.HikariConfig
 import org.pac4j.http.client.FormClient
 import org.pac4j.http.credentials.SimpleTestUsernamePasswordAuthenticator
@@ -32,7 +33,7 @@ final Logger log = LoggerFactory.getLogger(ratpack.class);
 
 ratpack {
     bindings {
-        ConfigData configData = ConfigData.of()
+        ConfigData configData = ConfigData.of(new JSR310Module())
                 .props("$serverConfig.baseDir.file/application.properties")
                 .env()
                 .sysProps()
@@ -40,20 +41,21 @@ ratpack {
         bindInstance(ReloadInformant, configData) // Add to the registry to enable development time config reloading
         bindInstance(IsbndbConfig, configData.get("/isbndb", IsbndbConfig))
 
+        addConfig(CodaHaleMetricsModule, configData.get("/metrics", CodaHaleMetricsModule.Config))
         bind DatabaseHealthCheck
-        add new CodaHaleHealthCheckModule()
-        add new CodaHaleMetricsModule(), { it.jvmMetrics(true).jmx() }
+        add CodaHaleHealthCheckModule
+
         add(HikariModule) { HikariConfig c ->
             c.addDataSourceProperty("URL", "jdbc:h2:mem:dev;INIT=CREATE SCHEMA IF NOT EXISTS DEV")
             c.setDataSourceClassName("org.h2.jdbcx.JdbcDataSource")
         }
-        add new SqlModule()
-        add new JacksonModule()
-        add new BookModule()
-        add new SessionModule()
+        add SqlModule
+        add JacksonModule
+        add BookModule
+        add SessionModule
         add new MapSessionsModule(10, 5)
         add new Pac4jModule<>(new FormClient("/login", new SimpleTestUsernamePasswordAuthenticator()), new AuthPathAuthorizer())
-        add new MarkupTemplateModule()
+        add MarkupTemplateModule
         add new HystrixModule().sse()
         bind MarkupTemplateRenderableDecorator
 
