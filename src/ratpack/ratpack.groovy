@@ -14,6 +14,7 @@ import ratpack.example.books.*
 import ratpack.form.Form
 import ratpack.groovy.sql.SqlModule
 import ratpack.groovy.template.MarkupTemplateModule
+import ratpack.handling.RequestId
 import ratpack.hikari.HikariModule
 import ratpack.hystrix.HystrixMetricsEventStreamHandler
 import ratpack.hystrix.HystrixModule
@@ -72,6 +73,8 @@ ratpack {
     }
 
     handlers { BookService bookService ->
+        handler(RequestId.bindAndLog()) // log all requests
+
         get {
             bookService.all().toList().subscribe { List<Book> books ->
                 def isbndbApikey = context.get(IsbndbConfig).apikey
