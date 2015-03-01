@@ -4,7 +4,7 @@ import com.codahale.metrics.annotation.Timed
 import com.codahale.metrics.health.HealthCheck
 import com.google.inject.Inject
 import groovy.sql.Sql
-import ratpack.codahale.metrics.NamedHealthCheck
+import ratpack.codahale.healthcheck.NamedHealthCheck
 
 class DatabaseHealthCheck extends NamedHealthCheck {
 
