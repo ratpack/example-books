@@ -1,24 +1,29 @@
 package ratpack.example.books
 
-import com.codahale.metrics.annotation.Timed
-import com.codahale.metrics.health.HealthCheck
 import com.google.inject.Inject
 import groovy.sql.Sql
-import ratpack.codahale.healthcheck.NamedHealthCheck
+import ratpack.exec.ExecControl
+import ratpack.exec.Promise
+import ratpack.health.HealthCheck
 
-class DatabaseHealthCheck extends NamedHealthCheck {
+class DatabaseHealthCheck implements HealthCheck {
 
-    @Inject
     Sql sql
 
-    public String getName() {
-        return "Database-Health-Check"
+    @Inject
+    public DatabaseHealthCheck(Sql sql) {
+        this.sql = sql
+    }
+
+    String getName() {
+        return "database-health-check"
     }
 
     @Override
-    @Timed
-    protected HealthCheck.Result check() throws Exception {
-        sql.rows("select count(*) from books")
-        HealthCheck.Result.healthy()
+    Promise<HealthCheck.Result> check(ExecControl execControl) throws Exception {
+        execControl.blocking {
+            sql.rows("select count(*) from books")
+            HealthCheck.Result.healthy()
+        }
     }
 }
