@@ -4,8 +4,6 @@ import org.pac4j.http.client.FormClient
 import org.pac4j.http.credentials.SimpleTestUsernamePasswordAuthenticator
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import ratpack.codahale.healthcheck.CodaHaleHealthCheckModule
-import ratpack.codahale.healthcheck.HealthCheckHandler
 import ratpack.codahale.metrics.CodaHaleMetricsModule
 import ratpack.codahale.metrics.MetricsWebsocketBroadcastHandler
 import ratpack.config.ConfigData
@@ -15,6 +13,7 @@ import ratpack.form.Form
 import ratpack.groovy.sql.SqlModule
 import ratpack.groovy.template.MarkupTemplateModule
 import ratpack.handling.RequestId
+import ratpack.health.HealthCheckHandler
 import ratpack.hikari.HikariModule
 import ratpack.hystrix.HystrixMetricsEventStreamHandler
 import ratpack.hystrix.HystrixModule
@@ -44,7 +43,6 @@ ratpack {
 
         addConfig(CodaHaleMetricsModule, configData.get("/metrics", CodaHaleMetricsModule.Config))
         bind DatabaseHealthCheck
-        add CodaHaleHealthCheckModule
 
         add(HikariModule) { HikariConfig c ->
             c.addDataSourceProperty("URL", "jdbc:h2:mem:dev;INIT=CREATE SCHEMA IF NOT EXISTS DEV")

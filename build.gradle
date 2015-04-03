@@ -16,7 +16,6 @@ apply plugin: "eclipse"
 
 repositories {
   jcenter()
-  maven { url 'http://clinker.netty.io/nexus/content/repositories/snapshots' }
   maven { url "https://oss.jfrog.org/repo" }
   maven { url "https://nexus.codehaus.org/content/repositories/snapshots/" }
 }
