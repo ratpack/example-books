@@ -2,6 +2,7 @@ import com.fasterxml.jackson.datatype.jsr310.JSR310Module
 import com.zaxxer.hikari.HikariConfig
 import org.pac4j.http.client.FormClient
 import org.pac4j.http.credentials.SimpleTestUsernamePasswordAuthenticator
+import org.pac4j.http.profile.UsernameProfileCreator
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import ratpack.codahale.metrics.CodaHaleMetricsModule
@@ -53,7 +54,9 @@ ratpack {
         add BookModule
         add SessionModule
         add new MapSessionsModule(10, 5)
-        add new Pac4jModule<>(new FormClient("/login", new SimpleTestUsernamePasswordAuthenticator()), new AuthPathAuthorizer())
+        add new Pac4jModule<>(
+                new FormClient("/login", new SimpleTestUsernamePasswordAuthenticator(), new UsernameProfileCreator()),
+                new AuthPathAuthorizer())
         add MarkupTemplateModule
         add new HystrixModule().sse()
         bind MarkupTemplateRenderableDecorator
