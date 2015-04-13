@@ -5,6 +5,7 @@ import groovy.sql.Sql
 import ratpack.exec.ExecControl
 import ratpack.exec.Promise
 import ratpack.health.HealthCheck
+import ratpack.registry.Registry
 
 class DatabaseHealthCheck implements HealthCheck {
 
@@ -20,7 +21,7 @@ class DatabaseHealthCheck implements HealthCheck {
     }
 
     @Override
-    Promise<HealthCheck.Result> check(ExecControl execControl) throws Exception {
+    Promise<HealthCheck.Result> check(ExecControl execControl, Registry registry) throws Exception {
         execControl.blocking {
             sql.rows("select count(*) from books")
             HealthCheck.Result.healthy()
