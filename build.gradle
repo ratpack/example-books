@@ -26,7 +26,6 @@ repositories {
 dependencies {
   springloaded "org.springframework:springloaded:1.2.3.RELEASE"
 
-  compile ratpack.dependency("config")
   compile ratpack.dependency("h2")
   compile ratpack.dependency("hikari")
   compile ratpack.dependency("jackson")
