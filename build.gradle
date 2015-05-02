@@ -21,9 +21,8 @@ repositories {
 }
 
 dependencies {
-  // springloaded "org.springframework:springloaded:1.2.1.RELEASE"
+  springloaded "org.springframework:springloaded:1.2.3.RELEASE"
 
-  compile ratpack.dependency("config")
   compile ratpack.dependency("h2")
   compile ratpack.dependency("hikari")
   compile ratpack.dependency("jackson")
@@ -32,27 +31,23 @@ dependencies {
   compile ratpack.dependency("rx")
   compile ratpack.dependency("hystrix")
   compile ratpack.dependency("pac4j")
-  compile "org.pac4j:pac4j-http:1.6.0"
-  compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.4.4'
+  compile "org.pac4j:pac4j-http:1.7.0"
+  compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.5.2'
 
-  runtime 'org.apache.logging.log4j:log4j-slf4j-impl:2.0.1'
-  runtime 'org.apache.logging.log4j:log4j-api:2.0.1'
-  runtime 'org.apache.logging.log4j:log4j-core:2.0.1'
+  runtime 'org.apache.logging.log4j:log4j-slf4j-impl:2.2'
+  runtime 'org.apache.logging.log4j:log4j-api:2.2'
+  runtime 'org.apache.logging.log4j:log4j-core:2.2'
   runtime 'com.lmax:disruptor:3.3.0'
 
-  testCompile "org.spockframework:spock-core:0.7-groovy-2.0", {
+  testCompile "org.spockframework:spock-core:1.0-groovy-2.4", {
       exclude module: "groovy-all"
   }
-  testCompile "org.gebish:geb-spock:0.9.3"
+  testCompile "org.gebish:geb-spock:0.10.0"
   // Required for mocking multi arg constructor e.g. BookService
   testRuntime "org.objenesis:objenesis:1.2"
-  testCompile "org.seleniumhq.selenium:selenium-firefox-driver:2.43.1"
+  testCompile "org.seleniumhq.selenium:selenium-firefox-driver:2.45.0"
   testCompile ratpack.dependency("remote-test")
 }
-
-// The Groovy that rest-assured drags in via ratpack-groovy-test is toxic, prevent it from coming in
-// This should be fixed upstream in Ratpack
-configurations.testCompile.dependencies.find { it.name == "ratpack-groovy-test" }.exclude(group: "org.codehaus.groovy")
 
 idea {
     project {

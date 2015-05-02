@@ -33,7 +33,7 @@ class BookDbCommands {
             HystrixObservableCommand.Setter.withGroupKey(hystrixCommandGroupKey).andCommandKey(HystrixCommandKey.Factory.asKey("getAll"))) {
 
             @Override
-            protected rx.Observable<GroovyRowResult> run() {
+            protected rx.Observable<GroovyRowResult> construct() {
                 observeEach(execControl.blocking {
                     sql.rows("select isbn, quantity, price from books order by isbn")
                 })
@@ -51,7 +51,7 @@ class BookDbCommands {
             HystrixObservableCommand.Setter.withGroupKey(hystrixCommandGroupKey).andCommandKey(HystrixCommandKey.Factory.asKey("insert"))) {
 
             @Override
-            protected rx.Observable<String> run() {
+            protected rx.Observable<String> construct() {
                 observe(execControl.blocking {
                     sql.executeInsert("insert into books (isbn, quantity, price) values ($isbn, $quantity, $price)")
                 })
@@ -64,7 +64,7 @@ class BookDbCommands {
             HystrixObservableCommand.Setter.withGroupKey(hystrixCommandGroupKey).andCommandKey(HystrixCommandKey.Factory.asKey("find"))) {
 
             @Override
-            protected rx.Observable<GroovyRowResult> run() {
+            protected rx.Observable<GroovyRowResult> construct() {
                 observe(execControl.blocking {
                     sql.firstRow("select quantity, price from books where isbn = $isbn")
                 })
@@ -82,7 +82,7 @@ class BookDbCommands {
             HystrixObservableCommand.Setter.withGroupKey(hystrixCommandGroupKey).andCommandKey(HystrixCommandKey.Factory.asKey("update"))) {
 
             @Override
-            protected rx.Observable<Void> run() {
+            protected rx.Observable<Void> construct() {
                 observe(execControl.blocking {
                     sql.executeUpdate("update books set quantity = $quantity, price = $price where isbn = $isbn")
                 })
@@ -95,7 +95,7 @@ class BookDbCommands {
             HystrixObservableCommand.Setter.withGroupKey(hystrixCommandGroupKey).andCommandKey(HystrixCommandKey.Factory.asKey("delete"))) {
 
             @Override
-            protected rx.Observable<Void> run() {
+            protected rx.Observable<Void> construct() {
                 observe(execControl.blocking {
                     sql.executeUpdate("delete from books where isbn = $isbn")
                 })

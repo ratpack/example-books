@@ -27,7 +27,7 @@ class IsbnDbCommands {
                 .andCommandKey(HystrixCommandKey.Factory.asKey("getBookRequest"))) {
 
             @Override
-            protected Observable<String> run() {
+            protected Observable<String> construct() {
                 def uri = "${config.host}/api/v2/json/${config.apikey}/book/$isbn".toURI()
                 observe(httpClient.get(uri)).map { ReceivedResponse resp ->
                     if (resp.body.text.contains("Daily request limit exceeded")) {
@@ -38,7 +38,7 @@ class IsbnDbCommands {
             }
 
             @Override
-            protected Observable<String> getFallback() {
+            protected Observable<String> resumeWithFallback() {
                 return Observable.just('{"data" : [{"title" : "Groovy in Action", "publisher_name" : "Manning Publications", "author_data" : [{"id" : "dierk_koenig", "name" : "Dierk Koenig"}]}]}')
             }
 
