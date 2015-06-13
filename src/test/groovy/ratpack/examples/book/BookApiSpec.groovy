@@ -21,7 +21,7 @@ class BookApiSpec extends Specification {
     @Shared
     EmbeddedApp isbndb = GroovyEmbeddedApp.build {
         handlers {
-            handler {
+            all {
                 render '{"data" : [{"title" : "Groovy in Action", "publisher_name" : "Manning Publications", "author_data" : [{"id" : "dierk_koenig", "name" : "Dierk Koenig"}]}]}'
             }
         }

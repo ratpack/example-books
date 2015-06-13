@@ -21,7 +21,7 @@ class BookRestEndpoint implements Action<Chain> {
     @Override
     void execute(Chain chain) throws Exception {
         Groovy.chain(chain) {
-            handler(":isbn") {
+            path(":isbn") {
                 def isbn = pathTokens["isbn"]
 
                 byMethod {
@@ -54,7 +54,7 @@ class BookRestEndpoint implements Action<Chain> {
                 }
             }
 
-            handler {
+            path("") {
                 byMethod {
                     get {
                         bookService.all().toList().subscribe { List<Book> books ->

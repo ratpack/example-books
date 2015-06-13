@@ -22,7 +22,7 @@ class BookFunctionalSpec extends GebReportingSpec {
     @Shared
     EmbeddedApp isbndb = GroovyEmbeddedApp.build {
         handlers {
-            handler {
+            all {
                 render '{"data" : [{"title" : "Jurassic Park: A Novel", "publisher_name" : "Ballantine Books", "author_data" : [{"id" : "cm", "name" : "Crichton, Michael"}]}]}'
             }
         }
