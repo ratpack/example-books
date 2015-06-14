@@ -157,7 +157,13 @@ ratpack {
 			all chain(registry.get(BookRestEndpoint))
 		}
 
-		all(RatpackPac4j.authenticator(new FormClient("/login", new SimpleTestUsernamePasswordAuthenticator(), new UsernameProfileCreator())))
+		def pac4jCallbackPath = "pac4j-callback"
+		all(RatpackPac4j.authenticator(
+				pac4jCallbackPath,
+				new FormClient("/login",
+				new SimpleTestUsernamePasswordAuthenticator(),
+				new UsernameProfileCreator())))
+
 		prefix("admin") {
 			all(RatpackPac4j.requireAuth(FormClient.class))
 
@@ -173,10 +179,16 @@ ratpack {
 		get("login") {
 			render groovyMarkupTemplate("login.gtpl",
 				title: "Login",
-				action: '/pac4j-callback',
+				action: "/$pac4jCallbackPath",
 				method: 'get',
 				buttonText: 'Login',
 				error: request.queryParams.error ?: "")
+		}
+
+		get("logout") { ctx ->
+			RatpackPac4j.logout(ctx).then {
+				redirect("/")
+			}
 		}
 
 		fileSystem("public") { f ->

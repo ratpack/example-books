@@ -22,6 +22,7 @@ bodyContents: contents {
     }
 
     if (username) {
+        ul(class: "nav nav-pills pull-right") { li { a(href: "/logout", 'Sign out') } }
         p(class: "navbar-text navbar-right") {
             span(class: "glyphicon glyphicon-user") {}
             yield 'Signed in as, ' strong(username)
