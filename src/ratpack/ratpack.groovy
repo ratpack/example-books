@@ -177,7 +177,6 @@ ratpack {
 		get("hystrix.stream", new HystrixMetricsEventStreamHandler())
 
 		get("login") { ctx ->
-			RatpackPac4j.login(ctx, FormClient)
 			render groovyMarkupTemplate("login.gtpl",
 				title: "Login",
 				action: "/$pac4jCallbackPath",
