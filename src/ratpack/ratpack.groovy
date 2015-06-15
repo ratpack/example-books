@@ -19,13 +19,12 @@ import ratpack.hikari.HikariModule
 import ratpack.hystrix.HystrixMetricsEventStreamHandler
 import ratpack.hystrix.HystrixModule
 import ratpack.jackson.JacksonModule
-import ratpack.pac4j.Pac4jModule
+import ratpack.pac4j.RatpackPac4j
 import ratpack.rx.RxRatpack
 import ratpack.server.ReloadInformant
 import ratpack.server.Service
 import ratpack.server.StartEvent
 import ratpack.session.SessionModule
-import ratpack.session.store.MapSessionsModule
 
 import static ratpack.groovy.Groovy.groovyMarkupTemplate
 import static ratpack.groovy.Groovy.ratpack
@@ -42,23 +41,20 @@ ratpack {
         bindInstance(ReloadInformant, configData) // Add to the registry to enable development time config reloading
         bindInstance(IsbndbConfig, configData.get("/isbndb", IsbndbConfig))
 
-        addConfig(CodaHaleMetricsModule, configData.get("/metrics", CodaHaleMetricsModule.Config))
+        moduleConfig(CodaHaleMetricsModule, configData.get("/metrics", CodaHaleMetricsModule.Config))
         bind DatabaseHealthCheck
 
-        add(HikariModule) { HikariConfig c ->
+        module(HikariModule) { HikariConfig c ->
             c.addDataSourceProperty("URL", "jdbc:h2:mem:dev;INIT=CREATE SCHEMA IF NOT EXISTS DEV")
             c.setDataSourceClassName("org.h2.jdbcx.JdbcDataSource")
         }
-        add SqlModule
-        add JacksonModule
-        add BookModule
-        add SessionModule
-        add new MapSessionsModule(10, 5)
-        add new Pac4jModule<>(
-                new FormClient("/login", new SimpleTestUsernamePasswordAuthenticator(), new UsernameProfileCreator()),
-                new AuthPathAuthorizer())
-        add MarkupTemplateModule
-        add new HystrixModule().sse()
+        module SqlModule
+        module JacksonModule
+        module BookModule
+        module SessionModule
+        module MarkupTemplateModule
+        module new HystrixModule().sse()
+
         bind MarkupTemplateRenderableDecorator
 
         bindInstance Service, new Service() {
@@ -75,6 +71,10 @@ ratpack {
 
     handlers { BookService bookService ->
         handler(RequestId.bindAndLog()) // log all requests
+
+        def pac4jCallbackPath = "pac4j-callback"
+        handler(RatpackPac4j.callback(pac4jCallbackPath,
+                new FormClient("/login", new SimpleTestUsernamePasswordAuthenticator(), new UsernameProfileCreator())))
 
         get {
             bookService.all().toList().subscribe { List<Book> books ->
@@ -162,6 +162,7 @@ ratpack {
         }
 
         prefix("admin") {
+            handler(RatpackPac4j.auth(FormClient))
             get("health-check/:name?", new HealthCheckHandler())
             get("metrics-report", new MetricsWebsocketBroadcastHandler())
 
@@ -174,7 +175,7 @@ ratpack {
         handler("login") {
             render groovyMarkupTemplate("login.gtpl",
                     title: "Login",
-                    action: '/pac4j-callback',
+                    action: "/$pac4jCallbackPath",
                     method: 'get',
                     buttonText: 'Login',
                     error: request.queryParams.error ?: "")
