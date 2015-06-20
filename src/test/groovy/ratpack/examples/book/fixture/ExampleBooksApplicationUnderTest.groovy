@@ -1,15 +1,16 @@
 package ratpack.examples.book.fixture
 
-import ratpack.registry.Registry
-import ratpack.registry.Registries
-import ratpack.remote.RemoteControl
+import groovy.transform.CompileStatic
 import ratpack.groovy.test.GroovyRatpackMainApplicationUnderTest
+import ratpack.guice.Guice
+import ratpack.registry.Registry
+import ratpack.remote.RemoteModule
 
+@CompileStatic
 class ExampleBooksApplicationUnderTest extends GroovyRatpackMainApplicationUnderTest {
-
   protected Registry createOverrides(Registry serverRegistry) throws Exception {
-    return Registries.registry {
-        it.add(RemoteControl.handlerDecorator())
-    }
+    return Guice.registry {
+        it.module RemoteModule
+    }.apply(serverRegistry)
   }
 }
