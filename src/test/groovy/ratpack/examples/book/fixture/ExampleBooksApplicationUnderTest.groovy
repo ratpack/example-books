@@ -4,13 +4,13 @@ import groovy.transform.CompileStatic
 import ratpack.groovy.test.GroovyRatpackMainApplicationUnderTest
 import ratpack.guice.Guice
 import ratpack.registry.Registry
-import ratpack.remote.RemoteModule
+import ratpack.remote.RemoteControl
 
 @CompileStatic
 class ExampleBooksApplicationUnderTest extends GroovyRatpackMainApplicationUnderTest {
   protected Registry createOverrides(Registry serverRegistry) throws Exception {
     return Guice.registry {
-        it.module RemoteModule
+        it.bindInstance RemoteControl.handlerDecorator()
     }.apply(serverRegistry)
   }
 }
