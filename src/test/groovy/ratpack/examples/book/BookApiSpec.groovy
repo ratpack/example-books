@@ -19,7 +19,7 @@ class BookApiSpec extends Specification {
     ApplicationUnderTest aut = new ExampleBooksApplicationUnderTest()
 
     @Shared
-    EmbeddedApp isbndb = GroovyEmbeddedApp.build {
+    EmbeddedApp isbndb = GroovyEmbeddedApp.of {
         handlers {
             all {
                 render '{"data" : [{"title" : "Groovy in Action", "publisher_name" : "Manning Publications", "author_data" : [{"id" : "dierk_koenig", "name" : "Dierk Koenig"}]}]}'
