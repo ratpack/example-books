@@ -20,9 +20,9 @@ class BookFunctionalSpec extends GebReportingSpec {
     ApplicationUnderTest aut = new ExampleBooksApplicationUnderTest()
 
     @Shared
-    EmbeddedApp isbndb = GroovyEmbeddedApp.build {
+    EmbeddedApp isbndb = GroovyEmbeddedApp.of {
         handlers {
-            handler {
+            all {
                 render '{"data" : [{"title" : "Jurassic Park: A Novel", "publisher_name" : "Ballantine Books", "author_data" : [{"id" : "cm", "name" : "Crichton, Michael"}]}]}'
             }
         }

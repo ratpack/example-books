@@ -32,17 +32,17 @@ import static ratpack.groovy.Groovy.ratpack
 final Logger log = LoggerFactory.getLogger(ratpack.class);
 
 ratpack {
-    bindings {
-        ConfigData configData = ConfigData.of(new JSR310Module())
-                .props("$serverConfig.baseDir.file/application.properties")
-                .env()
-                .sysProps()
-                .build()
-        bindInstance(ReloadInformant, configData) // Add to the registry to enable development time config reloading
-        bindInstance(IsbndbConfig, configData.get("/isbndb", IsbndbConfig))
+	bindings {
+		ConfigData configData = ConfigData.of(new JSR310Module())
+			.props("$serverConfig.baseDir.file/application.properties")
+			.env()
+			.sysProps()
+			.build()
+		bindInstance(ReloadInformant, configData) // Add to the registry to enable development time config reloading
+		bindInstance(IsbndbConfig, configData.get("/isbndb", IsbndbConfig))
 
-        moduleConfig(CodaHaleMetricsModule, configData.get("/metrics", CodaHaleMetricsModule.Config))
-        bind DatabaseHealthCheck
+		moduleConfig(CodaHaleMetricsModule, configData.get("/metrics", CodaHaleMetricsModule.Config))
+		bind DatabaseHealthCheck
 
         module(HikariModule) { HikariConfig c ->
             c.addDataSourceProperty("URL", "jdbc:h2:mem:dev;INIT=CREATE SCHEMA IF NOT EXISTS DEV")
@@ -57,131 +57,144 @@ ratpack {
 
         bind MarkupTemplateRenderableDecorator
 
-        bindInstance Service, new Service() {
-            @Override
-            void onStart(StartEvent event) throws Exception {
-                log.info "Initializing RX"
-                RxRatpack.initialize()
-                event.registry.get(BookService).createTable()
-            }
-        }
+		bindInstance Service, new Service() {
+			@Override
+			void onStart(StartEvent event) throws Exception {
+				log.info "Initializing RX"
+				RxRatpack.initialize()
+				event.registry.get(BookService).createTable()
+			}
+		}
 
-        bind ServerErrorHandler, ErrorHandler
-    }
+		bind ServerErrorHandler, ErrorHandler
+	}
 
-    handlers { BookService bookService ->
-        handler(RequestId.bindAndLog()) // log all requests
-
-        def pac4jCallbackPath = "pac4j-callback"
-        handler(RatpackPac4j.callback(pac4jCallbackPath,
-                new FormClient("/login", new SimpleTestUsernamePasswordAuthenticator(), new UsernameProfileCreator())))
+	handlers { BookService bookService ->
+		all(RequestId.bindAndLog()) // log all requests
 
         get {
             bookService.all().toList().subscribe { List<Book> books ->
                 def isbndbApikey = context.get(IsbndbConfig).apikey
 
-                render groovyMarkupTemplate("listing.gtpl",
-                        isbndbApikey: isbndbApikey,
-                        title: "Books",
-                        books: books,
-                        msg: request.queryParams.msg ?: "")
-            }
-        }
+				render groovyMarkupTemplate("listing.gtpl",
+					isbndbApikey: isbndbApikey,
+					title: "Books",
+					books: books,
+					msg: request.queryParams.msg ?: "")
+			}
+		}
 
-        handler("create") {
-            byMethod {
-                get {
-                    render groovyMarkupTemplate("create.gtpl",
-                            title: "Create Book",
-                            isbn: '',
-                            quantity: '',
-                            price: '',
-                            method: 'post',
-                            action: '',
-                            buttonText: 'Create'
-                    )
-                }
-                post {
-                    Form form = parse(Form)
-                    bookService.insert(
-                            form.isbn,
-                            form.get("quantity").asType(Long),
-                            form.get("price").asType(BigDecimal)
-                    ).single().subscribe() { String isbn ->
-                        redirect "/?msg=Book+$isbn+created"
-                    }
-                }
-            }
-        }
+		path("create") {
+			byMethod {
+				get {
+					render groovyMarkupTemplate("create.gtpl",
+						title: "Create Book",
+						isbn: '',
+						quantity: '',
+						price: '',
+						method: 'post',
+						action: '',
+						buttonText: 'Create'
+					)
+				}
+				post {
+					Form form = parse(Form)
+					bookService.insert(
+						form.isbn,
+						form.get("quantity").asType(Long),
+						form.get("price").asType(BigDecimal)
+					).single().subscribe() { String isbn ->
+						redirect "/?msg=Book+$isbn+created"
+					}
+				}
+			}
+		}
 
-        handler("update/:isbn") {
-            def isbn = pathTokens["isbn"]
+		path("update/:isbn") {
 
-            bookService.find(isbn).single().subscribe { Book book ->
-                if (book == null) {
-                    clientError(404)
-                } else {
-                    byMethod {
-                        get {
-                            render groovyMarkupTemplate("update.gtpl",
-                                    title: "Update Book",
-                                    method: 'post',
-                                    action: '',
-                                    buttonText: 'Update',
-                                    isbn: book.isbn,
-                                    bookTitle: book.title,
-                                    author: book.author,
-                                    publisher: book.publisher,
-                                    quantity: book.quantity,
-                                    price: book.price)
-                        }
-                        post {
-                            Form form = parse(Form)
-                            bookService.update(
-                                    isbn,
-                                    form.get("quantity").asType(Long),
-                                    form.get("price").asType(BigDecimal)
-                            ) subscribe {
-                                redirect "/?msg=Book+$isbn+updated"
-                            }
-                        }
-                    }
-                }
-            }
-        }
+			def isbn = pathTokens["isbn"]
 
-        post("delete/:isbn") {
-            def isbn = pathTokens["isbn"]
-            bookService.delete(isbn).subscribe {
-                redirect "/?msg=Book+$isbn+deleted"
-            }
-        }
+			bookService.find(isbn).single().subscribe { Book book ->
+				if (book == null) {
+					clientError(404)
+				} else {
+					byMethod {
+						get {
+							render groovyMarkupTemplate("update.gtpl",
+								title: "Update Book",
+								method: 'post',
+								action: '',
+								buttonText: 'Update',
+								isbn: book.isbn,
+								bookTitle: book.title,
+								author: book.author,
+								publisher: book.publisher,
+								quantity: book.quantity,
+								price: book.price)
+						}
+						post {
+							Form form = parse(Form)
+							bookService.update(
+								isbn,
+								form.get("quantity").asType(Long),
+								form.get("price").asType(BigDecimal)
+							) subscribe {
+								redirect "/?msg=Book+$isbn+updated"
+							}
+						}
+					}
+				}
+			}
+		}
 
-        prefix("api/book") {
-            handler chain(registry.get(BookRestEndpoint))
-        }
+		post("delete/:isbn") {
+			def isbn = pathTokens["isbn"]
+			bookService.delete(isbn).subscribe {
+				redirect "/?msg=Book+$isbn+deleted"
+			}
+		}
 
-        prefix("admin") {
-            handler(RatpackPac4j.auth(FormClient))
-            get("health-check/:name?", new HealthCheckHandler())
-            get("metrics-report", new MetricsWebsocketBroadcastHandler())
+		prefix("api/book") {
+			all chain(registry.get(BookRestEndpoint))
+		}
 
-            get("metrics") {
-                render groovyMarkupTemplate("metrics.gtpl", title: "Metrics")
-            }
-        }
-        get("hystrix.stream", new HystrixMetricsEventStreamHandler())
+		def pac4jCallbackPath = "pac4j-callback"
+		all(RatpackPac4j.authenticator(
+				pac4jCallbackPath,
+				new FormClient("/login",
+				new SimpleTestUsernamePasswordAuthenticator(),
+				new UsernameProfileCreator())))
 
-        handler("login") {
-            render groovyMarkupTemplate("login.gtpl",
-                    title: "Login",
-                    action: "/$pac4jCallbackPath",
-                    method: 'get',
-                    buttonText: 'Login',
-                    error: request.queryParams.error ?: "")
-        }
+		prefix("admin") {
+			all(RatpackPac4j.requireAuth(FormClient.class))
 
-        assets "public"
-    }
+			get("health-check/:name?", new HealthCheckHandler())
+			get("metrics-report", new MetricsWebsocketBroadcastHandler())
+
+			get("metrics") {
+				render groovyMarkupTemplate("metrics.gtpl", title: "Metrics")
+			}
+		}
+		get("hystrix.stream", new HystrixMetricsEventStreamHandler())
+
+		get("login") { ctx ->
+			render groovyMarkupTemplate("login.gtpl",
+				title: "Login",
+				action: "/$pac4jCallbackPath",
+				method: 'get',
+				buttonText: 'Login',
+				error: request.queryParams.error ?: "")
+		}
+
+		get("logout") { ctx ->
+			RatpackPac4j.logout(ctx).then {
+				redirect("/")
+			}
+		}
+
+		fileSystem("public") { f ->
+			f.files()
+		}
+	}
 
 }
