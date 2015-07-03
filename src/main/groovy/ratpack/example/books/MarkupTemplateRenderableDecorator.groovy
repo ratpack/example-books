@@ -13,14 +13,14 @@ class MarkupTemplateRenderableDecorator extends RenderableDecoratorSupport<Marku
 	@Override
 	Promise<MarkupTemplate> decorate(Context context, MarkupTemplate template) {
 		return RatpackPac4j
-				.userProfile(context)
-				.map { Optional<UserProfile> u -> u.orElse(null) }
-				.map { UserProfile userProfile ->
-			template.model.putAll([username: userProfile?.attributes?.username] as Map)
+            .userProfile(context)
+            .map { Optional<UserProfile> u -> u.orElse(null) }
+            .map { UserProfile userProfile ->
+			    template.model.putAll([username: userProfile?.attributes?.username] as Map)
 
-			new MarkupTemplate(template.name,
-					template.contentType,
-					template.model)
+                new MarkupTemplate(template.name,
+                        template.contentType,
+                        template.model)
 		}
 	}
 }

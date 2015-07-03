@@ -18,7 +18,7 @@ import ratpack.health.HealthCheckHandler
 import ratpack.hikari.HikariModule
 import ratpack.hystrix.HystrixMetricsEventStreamHandler
 import ratpack.hystrix.HystrixModule
-import ratpack.jackson.JacksonModule
+import ratpack.jackson.guice.JacksonModule
 import ratpack.pac4j.RatpackPac4j
 import ratpack.rx.RxRatpack
 import ratpack.server.ReloadInformant
