@@ -28,7 +28,7 @@ dependencies {
 
   compile ratpack.dependency("h2")
   compile ratpack.dependency("hikari")
-  compile ratpack.dependency("jackson")
+  compile ratpack.dependency("jackson-guice")
   compile ratpack.dependency("remote")
   compile ratpack.dependency("codahale-metrics")
   compile ratpack.dependency("rx")
