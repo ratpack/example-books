@@ -12,7 +12,7 @@ import ratpack.example.books.*
 import ratpack.form.Form
 import ratpack.groovy.sql.SqlModule
 import ratpack.groovy.template.MarkupTemplateModule
-import ratpack.handling.RequestId
+import ratpack.handling.RequestLogger
 import ratpack.health.HealthCheckHandler
 import ratpack.hikari.HikariModule
 import ratpack.hystrix.HystrixMetricsEventStreamHandler
@@ -24,13 +24,11 @@ import ratpack.server.ReloadInformant
 import ratpack.server.Service
 import ratpack.server.StartEvent
 import ratpack.session.SessionModule
-import rx.Observable
 
 import static ratpack.groovy.Groovy.groovyMarkupTemplate
 import static ratpack.groovy.Groovy.ratpack
-import static ratpack.rx.RxRatpack.observe
 
-final Logger log = LoggerFactory.getLogger(ratpack.class);
+final Logger logger = LoggerFactory.getLogger(ratpack.class);
 
 ratpack {
     bindings {
@@ -61,7 +59,7 @@ ratpack {
         bindInstance Service, new Service() {
             @Override
             void onStart(StartEvent event) throws Exception {
-                log.info "Initializing RX"
+                logger.info "Initializing RX"
                 RxRatpack.initialize()
                 event.registry.get(BookService).createTable()
             }
@@ -71,7 +69,7 @@ ratpack {
     }
 
     handlers { BookService bookService ->
-        all(RequestId.bindAndLog()) // log all requests
+        all RequestLogger.ncsa(logger) // log all requests
 
         get {
             bookService.all().
