@@ -17,7 +17,6 @@ import ratpack.health.HealthCheckHandler
 import ratpack.hikari.HikariModule
 import ratpack.hystrix.HystrixMetricsEventStreamHandler
 import ratpack.hystrix.HystrixModule
-import ratpack.jackson.guice.JacksonModule
 import ratpack.pac4j.RatpackPac4j
 import ratpack.rx.RxRatpack
 import ratpack.server.ReloadInformant
@@ -49,7 +48,6 @@ ratpack {
             c.setDataSourceClassName("org.h2.jdbcx.JdbcDataSource")
         }
         module SqlModule
-        module JacksonModule
         module BookModule
         module SessionModule
         module MarkupTemplateModule
