@@ -1,5 +1,6 @@
 buildscript {
     repositories {
+        mavenLocal()
         maven { url "http://oss.jfrog.org/artifactory/repo" }
         jcenter()
     }
@@ -8,24 +9,24 @@ buildscript {
         classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.1'
     }
     configurations.all {
-        resolutionStrategy.cacheDynamicVersionsFor 0, 'seconds'
+//        resolutionStrategy.cacheDynamicVersionsFor 0, 'seconds'
     }
 }
 
 apply plugin: "io.ratpack.ratpack-groovy"
+apply plugin: "io.ratpack.ratpack-continuous"
 apply plugin: "com.github.johnrengelman.shadow"
 apply plugin: "idea"
 apply plugin: "eclipse"
 
 repositories {
+  mavenLocal()
   jcenter()
   maven { url "https://oss.jfrog.org/repo" }
   maven { url "https://nexus.codehaus.org/content/repositories/snapshots/" }
 }
 
 dependencies {
-  springloaded "org.springframework:springloaded:1.2.3.RELEASE"
-
   compile ratpack.dependency("h2")
   compile ratpack.dependency("hikari")
   compile ratpack.dependency("remote")

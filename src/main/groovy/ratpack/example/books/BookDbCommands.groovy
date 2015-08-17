@@ -22,8 +22,7 @@ class BookDbCommands {
     }
 
     void createTables() {
-        sql.executeInsert("drop table if exists books")
-        sql.executeInsert("create table books (isbn varchar(13) primary key, quantity int, price numeric(15, 2))")
+        sql.executeInsert("create table if not exists books (isbn varchar(13) primary key, quantity int, price numeric(15, 2))")
     }
 
     rx.Observable<GroovyRowResult> getAll() {

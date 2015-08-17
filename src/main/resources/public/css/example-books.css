@@ -3,7 +3,7 @@ body {
 }
 
 #heapChart, #threadsChart {
-    margin-top: 72px;
+    margin-top: 172px;
 }
 
 #requestCountChart {
