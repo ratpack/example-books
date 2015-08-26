@@ -4,8 +4,9 @@ import org.pac4j.http.credentials.SimpleTestUsernamePasswordAuthenticator
 import org.pac4j.http.profile.UsernameProfileCreator
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import ratpack.codahale.metrics.CodaHaleMetricsModule
-import ratpack.codahale.metrics.MetricsWebsocketBroadcastHandler
+import ratpack.dropwizard.metrics.DropwizardMetricsConfig
+import ratpack.dropwizard.metrics.DropwizardMetricsModule
+import ratpack.dropwizard.metrics.MetricsWebsocketBroadcastHandler
 import ratpack.config.ConfigData
 import ratpack.error.ServerErrorHandler
 import ratpack.example.books.*
@@ -40,7 +41,7 @@ ratpack {
         bindInstance(ReloadInformant, configData) // Add to the registry to enable development time config reloading
         bindInstance(IsbndbConfig, configData.get("/isbndb", IsbndbConfig))
 
-        moduleConfig(CodaHaleMetricsModule, configData.get("/metrics", CodaHaleMetricsModule.Config))
+        moduleConfig(DropwizardMetricsModule, configData.get("/metrics", DropwizardMetricsConfig))
         bind DatabaseHealthCheck
 
         module HikariModule, { HikariConfig c ->

@@ -24,12 +24,10 @@ repositories {
 }
 
 dependencies {
-  springloaded "org.springframework:springloaded:1.2.3.RELEASE"
-
   compile ratpack.dependency("h2")
   compile ratpack.dependency("hikari")
   compile ratpack.dependency("remote")
-  compile ratpack.dependency("codahale-metrics")
+  compile ratpack.dependency("dropwizard-metrics")
   compile ratpack.dependency("rx")
   compile ratpack.dependency("hystrix")
   compile ratpack.dependency("pac4j")
