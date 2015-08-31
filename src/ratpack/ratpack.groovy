@@ -20,7 +20,6 @@ import ratpack.hystrix.HystrixMetricsEventStreamHandler
 import ratpack.hystrix.HystrixModule
 import ratpack.pac4j.RatpackPac4j
 import ratpack.rx.RxRatpack
-import ratpack.server.ReloadInformant
 import ratpack.server.Service
 import ratpack.server.StartEvent
 import ratpack.session.SessionModule
@@ -38,7 +37,6 @@ ratpack {
             c.sysProps()
         }
 
-        bindInstance(ReloadInformant, configData) // Add to the registry to enable development time config reloading
         bindInstance(IsbndbConfig, configData.get("/isbndb", IsbndbConfig))
 
         moduleConfig(DropwizardMetricsModule, configData.get("/metrics", DropwizardMetricsConfig))
