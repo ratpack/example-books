@@ -2,7 +2,7 @@ package ratpack.example.books
 
 import com.google.inject.Inject
 import groovy.sql.Sql
-import ratpack.exec.ExecControl
+import ratpack.exec.Blocking
 import ratpack.exec.Promise
 import ratpack.health.HealthCheck
 import ratpack.registry.Registry
@@ -21,8 +21,8 @@ class DatabaseHealthCheck implements HealthCheck {
     }
 
     @Override
-    Promise<HealthCheck.Result> check(ExecControl execControl, Registry registry) throws Exception {
-        execControl.blocking {
+    Promise<HealthCheck.Result> check(Registry registry) throws Exception {
+        Blocking.get {
             sql.rows("select count(*) from books")
             HealthCheck.Result.healthy()
         }

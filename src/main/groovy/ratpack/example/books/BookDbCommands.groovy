@@ -6,7 +6,7 @@ import com.netflix.hystrix.HystrixCommandKey
 import com.netflix.hystrix.HystrixObservableCommand
 import groovy.sql.GroovyRowResult
 import groovy.sql.Sql
-import ratpack.exec.ExecControl
+import ratpack.exec.Blocking
 
 import static ratpack.rx.RxRatpack.observe
 import static ratpack.rx.RxRatpack.observeEach
@@ -14,13 +14,11 @@ import static ratpack.rx.RxRatpack.observeEach
 class BookDbCommands {
 
     private final Sql sql
-    private final ExecControl execControl
     private static final HystrixCommandGroupKey hystrixCommandGroupKey = HystrixCommandGroupKey.Factory.asKey("sql-bookdb")
 
     @Inject
-    public BookDbCommands(Sql sql, ExecControl execControl) {
+    public BookDbCommands(Sql sql) {
         this.sql = sql
-        this.execControl = execControl
     }
 
     void createTables() {
@@ -34,7 +32,7 @@ class BookDbCommands {
 
             @Override
             protected rx.Observable<GroovyRowResult> construct() {
-                observeEach(execControl.blocking {
+                observeEach(Blocking.get {
                     sql.rows("select isbn, quantity, price from books order by isbn")
                 })
             }
@@ -52,7 +50,7 @@ class BookDbCommands {
 
             @Override
             protected rx.Observable<String> construct() {
-                observe(execControl.blocking {
+                observe(Blocking.get {
                     sql.executeInsert("insert into books (isbn, quantity, price) values ($isbn, $quantity, $price)")
                 })
             }
@@ -65,7 +63,7 @@ class BookDbCommands {
 
             @Override
             protected rx.Observable<GroovyRowResult> construct() {
-                observe(execControl.blocking {
+                observe(Blocking.get {
                     sql.firstRow("select quantity, price from books where isbn = $isbn")
                 })
             }
@@ -83,7 +81,7 @@ class BookDbCommands {
 
             @Override
             protected rx.Observable<Void> construct() {
-                observe(execControl.blocking {
+                observe(Blocking.get {
                     sql.executeUpdate("update books set quantity = $quantity, price = $price where isbn = $isbn")
                 })
             }
@@ -96,7 +94,7 @@ class BookDbCommands {
 
             @Override
             protected rx.Observable<Void> construct() {
-                observe(execControl.blocking {
+                observe(Blocking.get {
                     sql.executeUpdate("delete from books where isbn = $isbn")
                 })
             }

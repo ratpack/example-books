@@ -6,6 +6,7 @@ import javax.inject.Inject
 
 import static ratpack.jackson.Jackson.json
 import static ratpack.jackson.Jackson.jsonNode
+import static ratpack.rx.RxRatpack.observe
 
 class BookRestEndpoint extends GroovyChainAction {
 
@@ -23,52 +24,70 @@ class BookRestEndpoint extends GroovyChainAction {
 
             byMethod {
                 get {
-                    bookService.find(isbn).single().subscribe { Book book ->
-                        if (book == null) {
-                            clientError 404
-                        } else {
-                            render book
+                    bookService.find(isbn).
+                        single().
+                        subscribe { Book book ->
+                            if (book == null) {
+                                clientError 404
+                            } else {
+                                render book
+                            }
                         }
-                    }
                 }
                 put {
-                    def input = parse jsonNode()
-                    bookService.update(
-                            isbn,
-                            input.get("quantity").asLong(),
-                            input.get("price").asDouble()
-                    ) flatMap {
-                        bookService.find(isbn).single()
-                    } subscribe { Book book ->
-                        render book
-                    }
+                    parse(jsonNode()).
+                        observe().
+                        flatMap { input ->
+                            bookService.update(
+                                isbn,
+                                input.get("quantity").asLong(),
+                                input.get("price").asDouble()
+                            )
+                        }.
+                        flatMap {
+                            bookService.find(isbn)
+                        }.
+                        single().
+                        subscribe { Book book ->
+                            render book
+                        }
                 }
                 delete {
-                    bookService.delete(isbn).subscribe {
-                        response.send()
-                    }
+                    bookService.delete(isbn).
+                        subscribe {
+                            response.send()
+                        }
                 }
             }
         }
 
-        path("") {
+        all {
             byMethod {
                 get {
-                    bookService.all().toList().subscribe { List<Book> books ->
-                        render json(books)
-                    }
+                    bookService.all().
+                        toList().
+                        subscribe { List<Book> books ->
+                            render json(books)
+                        }
                 }
                 post {
-                    def input = parse jsonNode()
-                    bookService.insert(
-                            input.get("isbn").asText(),
-                            input.get("quantity").asLong(),
-                            input.get("price").asDouble()
-                    ).single().flatMap {
-                        bookService.find(it).single()
-                    } subscribe { Book createdBook ->
-                        render createdBook
-                    }
+                    parse(jsonNode()).
+                        observe().
+                        flatMap { input ->
+                            bookService.insert(
+                                input.get("isbn").asText(),
+                                input.get("quantity").asLong(),
+                                input.get("price").asDouble()
+                            )
+                        }.
+                        single().
+                        flatMap {
+                            bookService.find(it)
+                        }.
+                        single().
+                        subscribe { Book createdBook ->
+                            render createdBook
+                        }
                 }
             }
         }
