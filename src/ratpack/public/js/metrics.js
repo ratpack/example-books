@@ -43,11 +43,11 @@ function getTimerArrayPosition(timerName) {
 
         var chartData2 = new google.visualization.DataTable();
         chartData2.addColumn('date', 'Time');
-        chartData2.addColumn('number', '95thPercentile');
-        chartData2.addColumn({id:'50thPercentile', type:'number', role:'interval'});
-        chartData2.addColumn({id:'75thPercentile', type:'number', role:'interval'});
-        chartData2.addColumn({id:'99thPercentile', type:'number', role:'interval'});
-        chartData2.addColumn({id:'999thPercentile', type:'number', role:'interval'});
+        chartData2.addColumn('number', 'p95');
+        chartData2.addColumn({id:'p50', type:'number', role:'interval'});
+        chartData2.addColumn({id:'p75', type:'number', role:'interval'});
+        chartData2.addColumn({id:'p99', type:'number', role:'interval'});
+        chartData2.addColumn({id:'p999', type:'number', role:'interval'});
         timerChartsDataArray[2][timerArrayPosition] = chartData2;
     }
 
@@ -55,15 +55,15 @@ function getTimerArrayPosition(timerName) {
 }
 
 function updateTimerCharts(data) {
-    var snapshotTime = new Date(data.timestamp);
+    var snapshotTime = new Date();
 
-    $.each(data.timers, function (index, value) {
-        var timerDiv = getTimerDiv(value.name);
-        var timerArrayPosition = getTimerArrayPosition(value.name);
+    $.each(data.timers, function (name, value) {
+        var timerDiv = getTimerDiv(name);
+        var timerArrayPosition = getTimerArrayPosition(name);
 
         // Request per min chart
         var chartData1 = timerChartsDataArray[1][timerArrayPosition];
-        chartData1.addRow([snapshotTime,  value.oneMinuteRate]);
+        chartData1.addRow([snapshotTime,  value['m1_rate']]);
         if (chartData1.getNumberOfRows() > 30) {
             chartData1.removeRow(0);
         }
@@ -82,7 +82,7 @@ function updateTimerCharts(data) {
 
         // Response time chart
         var chartData2 = timerChartsDataArray[2][timerArrayPosition];
-        chartData2.addRow([snapshotTime, value['95thPercentile'], value['50thPercentile'], value['75thPercentile'], value['99thPercentile'], value['999thPercentile']]);
+        chartData2.addRow([snapshotTime, value['p95'], value['p50'], value['p75'], value['p99'], value['p999']]);
         if (chartData2.getNumberOfRows() > 15) {
             chartData2.removeRow(0);
         }
@@ -112,10 +112,10 @@ function findElement(arr, propName, propValue) {
 }
 
 function updateJvmCharts(data) {
-    var maxHeap = findElement(data.gauges, 'name', 'heap.max').value;
-    var usedHeap = findElement(data.gauges, 'name', 'heap.used').value;
+    var maxHeap = data.gauges['heap.max'].value;
+    var usedHeap = data.gauges['heap.used'].value;
 
-                               var heapData = google.visualization.arrayToDataTable([
+    var heapData = google.visualization.arrayToDataTable([
         ['Label', 'Value'],
         ['Heap', Math.round(parseInt(usedHeap)/parseInt(maxHeap)*100)]
     ]);
@@ -134,7 +134,7 @@ function updateJvmCharts(data) {
 
     var threadData = google.visualization.arrayToDataTable([
         ['Label', 'Value'],
-        ['Threads', findElement(data.gauges, 'name', 'count').value]
+        ['Threads', data.gauges['count'].value]
     ]);
 
     var threadChartOptions = {
