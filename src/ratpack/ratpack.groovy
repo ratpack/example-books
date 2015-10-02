@@ -201,9 +201,7 @@ ratpack {
             }
         }
 
-        fileSystem("public") { f ->
-            f.files()
-        }
+        files { it.dir("public") }
     }
 
 }
