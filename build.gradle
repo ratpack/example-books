@@ -5,7 +5,7 @@ buildscript {
     }
     dependencies {
         classpath 'io.ratpack:ratpack-gradle:+'
-        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.1'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.2'
     }
     configurations.all {
         resolutionStrategy.cacheDynamicVersionsFor 0, 'seconds'
@@ -31,7 +31,7 @@ dependencies {
   compile ratpack.dependency("rx")
   compile ratpack.dependency("hystrix")
   compile ratpack.dependency("pac4j")
-  compile "org.pac4j:pac4j-http:1.7.0"
+  compile "org.pac4j:pac4j-http:1.8.5"
   compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.5.2'
 
   runtime 'org.apache.logging.log4j:log4j-slf4j-impl:2.2'
@@ -42,10 +42,10 @@ dependencies {
   testCompile "org.spockframework:spock-core:1.0-groovy-2.4", {
       exclude module: "groovy-all"
   }
-  testCompile "org.gebish:geb-spock:0.10.0"
+  testCompile "org.gebish:geb-spock:0.13.0"
   // Required for mocking multi arg constructor e.g. BookService
   testRuntime "org.objenesis:objenesis:1.2"
-  testCompile "org.seleniumhq.selenium:selenium-firefox-driver:2.45.0"
+  testCompile "org.seleniumhq.selenium:selenium-firefox-driver:2.52.0"
   testCompile ratpack.dependency("remote-test")
 }
 
