@@ -9,13 +9,13 @@ bodyContents: contents {
         }
         p {
             yield 'Once you have done this you need to add your api key to the property '
-            code('other.isbndb.apikey')
+            code('isbndb.apikey')
             yield ' in the '
-            code('ratpack.properties')
+            code('application.properties')
             yield ' file and restart the application'
         }
         p {
-            code('other.isbndb.apikey')
+            code('isbndb.apikey')
             yield ' is currently set to '
             code(isbndbApikey)
         }

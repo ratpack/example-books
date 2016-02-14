@@ -29,18 +29,16 @@ import static ratpack.groovy.Groovy.ratpack
 final Logger logger = LoggerFactory.getLogger(ratpack.class);
 
 ratpack {
+    serverConfig {
+        props("application.properties")
+        sysProps("eb.")
+        env("EB_")
+        require("/isbndb", IsbndbConfig)
+        require("/metrics", DropwizardMetricsConfig)
+    }
     bindings {
-        ConfigData configData = ConfigData.of { c ->
-            c.props("$serverConfig.baseDir.file/application.properties")
-            c.env()
-            c.sysProps()
-        }
-
-        bindInstance(IsbndbConfig, configData.get("/isbndb", IsbndbConfig))
-
-        moduleConfig(DropwizardMetricsModule, configData.get("/metrics", DropwizardMetricsConfig))
+        moduleConfig(DropwizardMetricsModule, DropwizardMetricsConfig)
         bind DatabaseHealthCheck
-
         module HikariModule, { HikariConfig c ->
             c.addDataSourceProperty("URL", "jdbc:h2:mem:dev;INIT=CREATE SCHEMA IF NOT EXISTS DEV")
             c.setDataSourceClassName("org.h2.jdbcx.JdbcDataSource")
