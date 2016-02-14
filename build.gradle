@@ -5,7 +5,7 @@ buildscript {
     }
     dependencies {
         classpath 'io.ratpack:ratpack-gradle:+'
-        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.2'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
     }
     configurations.all {
         resolutionStrategy.cacheDynamicVersionsFor 0, 'seconds'
