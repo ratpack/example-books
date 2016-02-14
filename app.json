@@ -1,0 +1,13 @@
+{
+  "name": "Example Ratpack app",
+  "description": "A Groovy and Gradle based Ratpack app that can easily be deployed to Heroku.",
+  "env": {
+    "RATPACK_ISBNDB_CONFIG__API_KEY": {
+      "description": "Your API key for ISBNdb. You can create an account at http://isbndb.com/account"
+    },
+    "GRADLE_TASK": {
+      "description": "The Gradle task that Heroku will run to build this app",
+      "value": "installDist"
+    }
+  }
+}
