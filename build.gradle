@@ -3,12 +3,14 @@ plugins {
   id "com.github.johnrengelman.shadow" version "1.2.2"
   id "idea"
   id "eclipse"
+  id 'org.asciidoctor.convert' version '1.5.3'
 }
 
 repositories {
   jcenter()
   maven { url "https://oss.jfrog.org/repo" }
   maven { url "https://nexus.codehaus.org/content/repositories/snapshots/" }
+  maven { url 'https://repo.spring.io/libs-snapshot' }
 }
 
 dependencies {
@@ -53,3 +55,4 @@ idea {
 
 //some CI config
 apply from: "gradle/ci.gradle"
+apply from: "gradle/restdocs.gradle"

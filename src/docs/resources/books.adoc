@@ -1,0 +1,57 @@
+[[resources-books]]
+== Books
+
+[[books-list]]
+=== List Books
+
+A `GET` request will retrieve a list of available books
+
+==== Example request
+
+include::{snippets}/books-list-example/curl-request.adoc[]
+
+==== Example response
+
+include::{snippets}/books-list-example/http-response.adoc[]
+
+==== Response structure
+
+include::{snippets}/books-list-example/response-fields.adoc[]
+
+[[books-retrieve]]
+=== Retrieve A Book
+
+A `GET` request will retrieve the details of an individual book
+
+==== Example request
+
+include::{snippets}/books-get-example/curl-request.adoc[]
+
+==== Example response
+
+include::{snippets}/books-get-example/http-response.adoc[]
+
+==== Response structure
+
+include::{snippets}/books-get-example/response-fields.adoc[]
+
+[[resources-books-create]]
+=== Create a New Book
+
+A `POST` request is used to create new books
+
+==== Example request
+
+include::{snippets}/books-create-example/curl-request.adoc[]
+
+==== Request structure
+
+include::{snippets}/books-create-example/request-fields.adoc[]
+
+==== Example response
+
+include::{snippets}/books-create-example/http-response.adoc[]
+
+==== Response structure
+
+include::{snippets}/books-create-example/response-fields.adoc[]

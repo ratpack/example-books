@@ -204,6 +204,10 @@ ratpack {
         fileSystem("public") { f ->
             f.files()
         }
+
+        get('docs') {
+            redirect('/docs/index.html')
+        }
     }
 
 }
