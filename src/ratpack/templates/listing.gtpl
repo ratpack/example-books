@@ -20,15 +20,17 @@ bodyContents: contents {
             code(isbndbApikey)
         }
     }
+    def welcome = [message: username ? 'Sign out' : 'Sign in', url: username ? '/logout' : 'login']
+    ul(class: "nav nav-pills pull-right") {
+        li { a(href: "/docs", target: '_blank', 'Rest Api Documentation') }
+        li { a(href: welcome.url, welcome.message) }
+    }
 
     if (username) {
-        ul(class: "nav nav-pills pull-right") { li { a(href: "/logout", 'Sign out') } }
         p(class: "navbar-text navbar-right") {
             span(class: "glyphicon glyphicon-user") {}
             yield 'Signed in as, ' strong(username)
         }
-    } else {
-        ul(class: "nav nav-pills pull-right") { li { a(href: "/login", 'Sign in') } }
     }
 
     h1('Books')

@@ -1,10 +1,23 @@
-plugins {
-  id "io.ratpack.ratpack-groovy" version "+"
-  id "com.github.johnrengelman.shadow" version "1.2.3"
-  id "idea"
-  id "eclipse"
-  id 'org.asciidoctor.convert' version '1.5.3'
+buildscript {
+    repositories {
+        maven { url "http://oss.jfrog.org/artifactory/repo" }
+        jcenter()
+    }
+    dependencies {
+        classpath 'io.ratpack:ratpack-gradle:+'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
+        classpath "org.asciidoctor:asciidoctor-gradle-plugin:1.5.3"
+    }
+    configurations.all {
+        resolutionStrategy.cacheDynamicVersionsFor 0, 'seconds'
+    }
 }
+
+apply plugin: "io.ratpack.ratpack-groovy"
+apply plugin: "com.github.johnrengelman.shadow"
+apply plugin: "org.asciidoctor.convert"
+apply plugin: "idea"
+apply plugin: "eclipse"
 
 repositories {
   jcenter()

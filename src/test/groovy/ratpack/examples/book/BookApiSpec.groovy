@@ -32,8 +32,8 @@ class BookApiSpec extends Specification {
     RemoteControl remote = new RemoteControl(aut)
 
     def setupSpec() {
-        System.setProperty('ratpack.isbndb.host', "http://${isbndb.address.host}:${isbndb.address.port}")
-        System.setProperty('ratpack.isbndb.apikey', "fakeapikey")
+        System.setProperty('eb.isbndb.host', "http://${isbndb.address.host}:${isbndb.address.port}")
+        System.setProperty('eb.isbndb.apikey', "fakeapikey")
     }
 
     def cleanup() {
@@ -43,7 +43,7 @@ class BookApiSpec extends Specification {
     }
 
     def cleanupSpec() {
-        System.clearProperty('ratpack.isbndb.host')
+        System.clearProperty('eb.isbndb.host')
     }
 
     def "list empty books"() {

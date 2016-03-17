@@ -11,7 +11,7 @@ import ratpack.test.ApplicationUnderTest
 import spock.lang.Shared
 import spock.lang.Specification
 
-class BaseDocumentationSpec extends Specification {
+abstract class BaseDocumentationSpec extends Specification {
 
     @Shared
     ApplicationUnderTest aut = new ExampleBooksApplicationUnderTest()

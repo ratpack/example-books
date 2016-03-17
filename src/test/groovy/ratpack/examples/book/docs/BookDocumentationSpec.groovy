@@ -39,12 +39,12 @@ class BookDocumentationSpec extends BaseDocumentationSpec {
 
 
     def setupSpec() {
-        System.setProperty('ratpack.isbndb.host', "http://${isbndb.address.host}:${isbndb.address.port}")
-        System.setProperty('ratpack.isbndb.apikey', "fakeapikey")
+        System.setProperty('eb.isbndb.host', "http://${isbndb.address.host}:${isbndb.address.port}")
+        System.setProperty('eb.isbndb.apikey', "fakeapikey")
     }
 
     def cleanupSpec() {
-        System.clearProperty('ratpack.isbndb.host')
+        System.clearProperty('eb.isbndb.host')
     }
 
     def setupTestBook() {
