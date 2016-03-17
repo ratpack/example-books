@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory
 import ratpack.dropwizard.metrics.DropwizardMetricsConfig
 import ratpack.dropwizard.metrics.DropwizardMetricsModule
 import ratpack.dropwizard.metrics.MetricsWebsocketBroadcastHandler
-import ratpack.config.ConfigData
 import ratpack.error.ServerErrorHandler
 import ratpack.example.books.*
 import ratpack.form.Form

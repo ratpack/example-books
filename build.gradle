@@ -55,13 +55,7 @@ idea {
     project {
         jdkName "1.8"
         languageLevel "1.8"
-        ipr {
-            withXml { provider ->
-                def node = provider.asNode()
-                //configure git support for the project in idea
-                node.component.find { it.'@name' == 'VcsDirectoryMappings' }?.mapping[0].'@vcs' = 'Git'
-            }
-        }
+        vcs 'Git'
     }
 }
 
