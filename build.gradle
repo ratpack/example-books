@@ -1,26 +1,16 @@
-buildscript {
-    repositories {
-        maven { url "http://oss.jfrog.org/artifactory/repo" }
-        jcenter()
-    }
-    dependencies {
-        classpath 'io.ratpack:ratpack-gradle:+'
-        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
-    }
-    configurations.all {
-        resolutionStrategy.cacheDynamicVersionsFor 0, 'seconds'
-    }
+plugins {
+  id "io.ratpack.ratpack-groovy" version "+"
+  id "com.github.johnrengelman.shadow" version "1.2.3"
+  id "idea"
+  id "eclipse"
+  id 'org.asciidoctor.convert' version '1.5.3'
 }
-
-apply plugin: "io.ratpack.ratpack-groovy"
-apply plugin: "com.github.johnrengelman.shadow"
-apply plugin: "idea"
-apply plugin: "eclipse"
 
 repositories {
   jcenter()
   maven { url "https://oss.jfrog.org/repo" }
   maven { url "https://nexus.codehaus.org/content/repositories/snapshots/" }
+  maven { url 'https://repo.spring.io/libs-snapshot' }
 }
 
 dependencies {
@@ -61,3 +51,4 @@ idea {
 
 //some CI config
 apply from: "gradle/ci.gradle"
+apply from: "gradle/restdocs.gradle"

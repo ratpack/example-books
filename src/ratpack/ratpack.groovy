@@ -196,6 +196,10 @@ ratpack {
         }
 
         files { it.dir("public") }
+
+        get('docs') {
+            redirect('/docs/index.html')
+        }
     }
 
 }

@@ -9,3 +9,6 @@ out
 .classpath
 *.log
 *.log.gz
+
+src/docs/generated-snippets/
+src/ratpack/public/docs

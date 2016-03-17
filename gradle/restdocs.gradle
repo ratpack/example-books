@@ -1,0 +1,36 @@
+dependencies {
+    testCompile 'org.springframework.restdocs:spring-restdocs-restassured:1.1.0.M1'
+}
+
+ext {
+    snippetsDir = file('src/docs/generated-snippets')
+}
+
+task cleanTempDirs(type: Delete) {
+    delete fileTree(dir: 'src/docs/generated-snippets')
+    delete fileTree(dir: 'src/ratpack/public/docs')
+}
+
+test {
+    dependsOn cleanTempDirs
+    outputs.dir snippetsDir
+}
+
+asciidoctor {
+    mustRunAfter test
+    inputs.dir snippetsDir
+    sourceDir = file('src/docs')
+    separateOutputDirs = false
+    outputDir "$projectDir/src/ratpack/public/docs"
+    attributes 'snippets': snippetsDir,
+            'source-highlighter': 'prettify',
+            'imagesdir': 'images',
+            'toc': 'left',
+            'icons': 'font',
+            'setanchors': 'true',
+            'idprefix': '',
+            'idseparator': '-',
+            'docinfo1': 'true'
+}
+
+build.dependsOn asciidoctor
