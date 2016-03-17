@@ -6,12 +6,6 @@ plugins {
     id 'org.asciidoctor.convert' version '1.5.3'
 }
 
-apply plugin: "io.ratpack.ratpack-groovy"
-apply plugin: "com.github.johnrengelman.shadow"
-apply plugin: "org.asciidoctor.convert"
-apply plugin: "idea"
-apply plugin: "eclipse"
-
 repositories {
   jcenter()
   maven { url "https://oss.jfrog.org/repo" }
