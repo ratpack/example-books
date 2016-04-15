@@ -195,11 +195,7 @@ ratpack {
             }
         }
 
-        files { it.dir("public") }
-
-        get('docs') {
-            redirect('/docs/index.html')
-        }
+        files { it.dir("public").indexFiles("index.html") }
     }
 
 }
