@@ -3,25 +3,19 @@ dependencies {
 }
 
 ext {
-    snippetsDir = file('src/docs/generated-snippets')
-}
-
-task cleanTempDirs(type: Delete) {
-    delete fileTree(dir: 'src/docs/generated-snippets')
-    delete fileTree(dir: 'src/ratpack/public/docs')
+    snippetsDir = file("$buildDir/docs/generated-snippets")
 }
 
 test {
-    dependsOn cleanTempDirs
     outputs.dir snippetsDir
 }
 
 asciidoctor {
-    mustRunAfter test
+    dependsOn test
     inputs.dir snippetsDir
     sourceDir = file('src/docs')
     separateOutputDirs = false
-    outputDir "$projectDir/src/ratpack/public/docs"
+    outputDir "${sourceSets.main.output.resourcesDir}/public/docs"
     attributes 'snippets': snippetsDir,
             'source-highlighter': 'prettify',
             'imagesdir': 'images',
@@ -34,3 +28,5 @@ asciidoctor {
 }
 
 build.dependsOn asciidoctor
+shadowJar.dependsOn asciidoctor
+jar.dependsOn asciidoctor

@@ -17,7 +17,7 @@ abstract class BaseDocumentationSpec extends Specification {
     ApplicationUnderTest aut = new ExampleBooksApplicationUnderTest()
 
     @Rule
-    JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation('src/docs/generated-snippets')
+    JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation('build/docs/generated-snippets')
 
     protected RequestSpecification documentationSpec
 
