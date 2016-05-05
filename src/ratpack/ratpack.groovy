@@ -159,9 +159,7 @@ ratpack {
                 }
         }
 
-        prefix("api/book") {
-            all chain(registry.get(BookRestEndpoint))
-        }
+        prefix("api/book", BookRestEndpoint)
 
         def pac4jCallbackPath = "pac4j-callback"
         all(RatpackPac4j.authenticator(
